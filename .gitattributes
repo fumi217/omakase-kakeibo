@@ -1,0 +1,13 @@
+# 改行コードを LF にそろえる（WSL / macOS の混在や、Windows 側のエディタで CRLF が入るのを防ぐ）
+* text=auto eol=lf
+
+# シェルスクリプトは CRLF だと Docker（Linux）内で動かないため明示する
+*.sh text eol=lf
+
+# バイナリ（改行変換しない）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary

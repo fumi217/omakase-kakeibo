@@ -10,6 +10,9 @@ node_modules/
 dist/
 *.zip
 
+# Claude Code personal settings
+.claude/settings.local.json
+
 # OS / editor
 .DS_Store
 .vscode/
