@@ -1,28 +1,20 @@
 #!/bin/bash
-# git commit の直前に、.env 系ファイルとトークンらしき値がステージされていないか確認する。
-# 見つかったら exit 2 でコミットをブロックする（github-workflow スキルのチェック 2・3 と同じ内容）。
+# Claude が git commit を実行する直前に、.githooks/pre-commit で .env 系ファイルとトークンらしき値を確認する。
+# 判定のルールは .githooks/pre-commit の 1 か所だけに置く（ここには書かない）。
 # ホストに python3 / jq / node がなくても動くよう、標準入力の JSON は grep で判定する。
 
 input=$(cat)
 
 echo "$input" | grep -qE 'git[[:space:]]+commit' || exit 0
 
-staged=$(git diff --cached --name-only)
-blocked_files=$(echo "$staged" | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$')
+cd "$CLAUDE_PROJECT_DIR" || exit 0
 
-if [ -n "$blocked_files" ]; then
-  echo ".env 系のファイルがステージされています。コミットをブロックしました: $blocked_files" >&2
-  exit 2
-fi
+# core.hooksPath が .githooks なら、git 自身が pre-commit を実行するので二重に動かさない
+case "$(git config core.hooksPath)" in
+  .githooks | .githooks/ | */.githooks | */.githooks/) exit 0 ;;
+esac
 
-token_lines=$(git diff --cached -U0 \
-  | grep -E '^\+' \
-  | grep -iE '(access[_-]?token|channel[_-]?secret|sunabar[_-]?token|x-access-token|aws_secret|AKIA[0-9A-Z]{16})[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9+/=_-]{16,}')
-
-if [ -n "$token_lines" ]; then
-  echo "トークンらしき値がステージされた差分に含まれています。コミットをブロックしました。" >&2
-  echo "値をコードから取り除き、環境変数（.env / Lambda の環境変数）から読むようにしてください。" >&2
-  exit 2
-fi
+# pre-commit はブロック時に exit 1 を返すが、Claude の hook は exit 2 でないとコマンドを止めない
+sh .githooks/pre-commit || exit 2
 
 exit 0
