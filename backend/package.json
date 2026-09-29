@@ -1,0 +1,13 @@
+{
+  "name": "kakeibo-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "家計簿ダッシュボードのバックエンド（AWS Lambda / Node.js 22）",
+  "scripts": {
+    "start": "node local/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22 <23"
+  }
+}
