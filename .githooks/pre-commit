@@ -1,0 +1,21 @@
+#!/bin/sh
+# .env やトークンらしき値のコミットを止める（有効化: git config core.hooksPath .githooks）
+# GitHub の Secret scanning / ブランチ保護が使えないプランのため、手元で防ぐ。
+
+env_files=$(git diff --cached --name-only | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$')
+if [ -n "$env_files" ]; then
+  echo "🚨 .env がステージされているため、コミットを止めました:" >&2
+  echo "$env_files" >&2
+  echo "外す: git restore --staged <ファイル名>" >&2
+  exit 1
+fi
+
+tokens=$(git diff --cached -U0 | grep -E '^\+' | grep -iE '(access[_-]?token|channel[_-]?secret|sunabar[_-]?token|x-access-token|aws_secret|AKIA[0-9A-Z]{16})\s*[:=]\s*["'"'"']?[A-Za-z0-9+/=_-]{16,}')
+if [ -n "$tokens" ]; then
+  echo "🚨 トークンらしき値が差分に含まれているため、コミットを止めました:" >&2
+  echo "$tokens" | cut -c1-40 >&2
+  echo "環境変数（process.env.XXX）から読むように直してください。" >&2
+  exit 1
+fi
+
+exit 0
