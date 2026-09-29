@@ -184,7 +184,7 @@ frontend/
 
 | フェーズ | 期間の目安 | 内容 | 完了の定義 |
 |---|---|---|---|
-| 0. 準備 | Day2 14:30〜15:30 | Docker 環境、`.env`、LINE ログインチャネル＋LIFF 登録、Amplify に空の React を公開、sunabar でデモ用明細を作成 | 全員が `docker compose up` でき、スマホの LINE で空の LIFF 画面が開く |
+| 0. 準備 | Day2 14:30〜15:30 | Docker 環境、`.env`、ミニアプリ（開発用）の LIFF ID 確認、Amplify に空の React を公開、sunabar でデモ用明細を作成 | 全員が `docker compose up` でき、スマホの LINE で空の LIFF 画面が開く |
 | 1. P1: LINE サマリー | Day2 15:30〜Day3 午前 | `sunabar.js` / `summary.js` / `categorize.js` / `webhook.js` / `flexMessage.js`、リッチメニュー | LINE で「今月」「先月」にカードが返る（spec US1 の受け入れシナリオ 1〜4） |
 | 2. P2: ダッシュボード | Day3 午後〜Day4 午前 | `api.js`、React の各コンポーネント、Amplify デプロイ | リッチメニューからグラフ・明細・月切替・絞り込みが動く（US2） |
 | 3. P3: 予算 | Day4 午後 | `budget.js`、`BudgetList.jsx`、Flex Message に超過表示 | US3 の受け入れシナリオ 1〜3 |
@@ -200,7 +200,7 @@ frontend/
 | 担当ストーリー | US1（LINE サマリー）、US3（予算） | US2（ダッシュボード）、US4（統一 ID） |
 | バックエンド | `services/sunabar.js`, `services/summary.js`, `lib/month.js`, `handlers/webhook.js`, `services/flexMessage.js`, `mock/budget.js` | `handlers/api.js`, `services/transactions.js`, `mock/categorize.js`, `mock/unifiedAccounts.js`, `lib/http.js`, `local/server.js` |
 | フロントエンド | `components/BudgetList.jsx` | `main.jsx`, `App.jsx`, `api/client.js`, `hooks/`, `MonthSwitcher` / `SummaryCards` / `CategoryPieChart` / `DailyBarChart` / `TransactionList` |
-| LINE / AWS 設定 | Messaging API（Webhook）、リッチメニュー、Lambda `kakeibo-webhook` | LINE ログインチャネル・LIFF、Amplify Hosting、Lambda `kakeibo-api` |
+| LINE / AWS 設定 | Messaging API（Webhook）、リッチメニュー、Lambda `kakeibo-webhook` | LINE ミニアプリ（開発用の LIFF・エンドポイント URL）、Amplify Hosting、Lambda `kakeibo-api` |
 | 発表する自作 API | 予算 API | 支出カテゴリ判定 API、統一 ID 他行明細 API |
 | PR レビュアー | @masuda-yu1019 | @fumi217 |
 
@@ -229,15 +229,15 @@ frontend/
 | リスク | 影響 | 対策 |
 |---|---|---|
 | sunabar 明細の項目名・ページングが想定と違う | P1 が遅れる | Phase 0 で Postman の実レスポンスを `tests/fixtures/` に保存（口座番号はダミー化）し、A（@fumi217）が最初に確認 |
-| LIFF / LINE ログインチャネル / CORS の設定で詰まる | P2 が遅れる | Phase 0 で「空の画面を LINE で開く」「API を 1 本叩く」まで先に通す |
+| LIFF（ミニアプリ）/ Amplify / CORS の設定で詰まる | P2 が遅れる | Phase 0 で「空の画面を LINE で開く」「API を 1 本叩く」まで先に通す |
 | デモ用の明細が少なくグラフが寂しい | 発表の見栄え | Phase 0 で入金・振込を 10〜20 件作成。店舗系の支出は P4 のダミー明細で補う |
 | トークンの漏洩（コミット・スクショ） | 重大 | `.gitignore`、`github-workflow` スキルのコミット前チェック、PR テンプレートの確認項目 |
 | Lambda のタイムアウト | 無反応 | タイムアウト 30 秒、ページングは最大 5 回で打ち切りログを出す |
 
-## 未確定事項（チームで決めること）
+## チームで決めたこと・未確定事項
 
 - デプロイ先 AWS アカウント: 代表者 1 名のアカウントに集約するか（推奨: 発表用に 1 つに集約し、他のメンバーは Docker のローカル環境で開発）。
-- LINE の Bot / LIFF: 代表者のチャネルに集約するか（推奨: 同上）。メンバーは LINE Developers の「権限設定」で招待してもらう。
+- ✅ **決定（2026-09-29）** LINE の Bot（Messaging API）と LIFF（LINE ミニアプリ）は、**@fumi217 さんのプロバイダー**にそろえる。プロバイダーが違うと同じ人でも LINE のユーザー ID が別になるため。@masuda-yu1019 はチャネルの「権限設定」で追加済み。LIFF はミニアプリの「開発用」内部チャネルを使う（research R-007）。
 - 各メンバーの sunabar トークン: ローカル開発では各自の sunabar 口座を使ってよい（デモは代表者の口座）。
 
 ## Complexity Tracking

@@ -15,7 +15,7 @@
 | Docker Desktop | `docker compose version` が表示される |
 | Git | `git --version` |
 | sunabar のアカウント（個人口座のトークン） | sunabar ポータルにログインできる |
-| LINE Developers（代表者のチャネルに招待済み） | コンソールでプロバイダーが見える |
+| LINE Developers（@fumi217 さんのプロバイダーのチャネルに権限を追加済み） | コンソールで Bot とミニアプリのチャネルが見える |
 | AWS アカウント（デプロイ担当のみ） | コンソールに MFA でログインできる |
 
 ホストに Node.js は不要（Docker 内の Node.js 22 を使う）。
@@ -86,19 +86,31 @@ API の仕様は [contracts/api.md](./contracts/api.md)。
    - `kakeibo-api` は「その他の設定」で **CORS を有効化**し、許可オリジンに Amplify の URL を入れる
 7. LINE Developers の Messaging API 設定で、Webhook URL に `kakeibo-webhook` の関数 URL を設定し、「Webhook の利用」をオン →「検証」で成功を確認
 
-### 4-2. フロントエンド（Amplify Hosting）
+### 4-2. フロントエンド（LINE ミニアプリ ＋ Amplify Hosting）
 
-1. `.env` の `VITE_API_BASE_URL` を `kakeibo-api` の関数 URL に、`VITE_LIFF_MOCK=false` にする
-2. `docker compose run --rm frontend npm run build` → `frontend/dist/`
-3. `dist` の**中身**を zip にする
-4. AWS Amplify →「アプリを作成」→「Git なしでデプロイ」→ zip をドラッグ＆ドロップ → HTTPS の URL が発行される
+LIFF は **LINE ミニアプリのチャネル**（@fumi217 さんのプロバイダー）の**開発用**内部チャネルを使う（[research R-007](./research.md#r-007-liff-の開発方法ローカル)）。デプロイを 1 回で済ませるため、「LIFF ID を先に確認 → ビルド → Amplify に公開 → エンドポイント URL を差し替え」の順に進める。
 
-### 4-3. LIFF とリッチメニュー
+1. **LIFF ID を確認する**: LINE Developers → ミニアプリのチャネル →「ウェブアプリ設定」タブ →「開発用」の **LIFF ID** と **LIFF URL**（`https://miniapp.line.me/xxxx` または `https://liff.line.me/xxxx`）を控える。エンドポイント URL が空なら、仮に `https://example.com` を入れておく
+   - 開発用を開けるのは、チャネルの「権限設定」に追加されたメンバーだけ。2 人とも追加されていることを確認する
+2. **`.env` を設定する**（本番ビルド用）
+   ```dotenv
+   VITE_LIFF_ID=（1 の開発用 LIFF ID）
+   VITE_LIFF_MOCK=false
+   VITE_API_BASE_URL=（kakeibo-api の関数 URL。未デプロイなら空のままでよい）
+   ```
+3. **ビルドする**: `docker compose run --rm frontend npm run build` → `frontend/dist/`
+4. **zip にする**（`dist` フォルダではなく**中身**を zip にする）: `(cd frontend/dist && zip -r ../../kakeibo-frontend.zip .)`（`*.zip` は Git 管理外）
+5. **Amplify に公開する**: AWS コンソール（東京リージョン）→ Amplify →「新しいアプリを作成」→「Git なしでデプロイ」→ アプリ名 `kakeibo-dashboard` → 4 の zip をドラッグ＆ドロップ → `https://main.xxxx.amplifyapp.com` のような HTTPS の URL が発行される
+6. **エンドポイント URL を差し替える**: ミニアプリのチャネル →「ウェブアプリ設定」→「開発用」のエンドポイント URL を 5 の Amplify の URL に変更する
+7. **LINE で開く**: 1 の LIFF URL を自分宛てに LINE で送ってタップする →「○○さんの家計簿」と表示されれば完了
+8. **ローカル開発に戻す**: `.env` の `VITE_LIFF_MOCK=true`、`VITE_API_BASE_URL=http://localhost:3000` に戻す（または空にして compose の既定値を使う）
 
-1. LINE Developers で、同じプロバイダーに **LINE ログインチャネル**を作成（Messaging API チャネルには LIFF を追加できない）
-2. LIFF タブで LIFF アプリを追加: サイズ `Full`、エンドポイント URL に Amplify の URL、Scope に `profile` → LIFF ID と LIFF URL（`https://liff.line.me/xxxx`）が発行される
-3. `VITE_LIFF_ID` を設定して 4-2 をやり直す。`kakeibo-webhook` の環境変数 `LIFF_URL` を設定
-4. LINE Official Account Manager → リッチメニューで 3 ボタンを作成（[contracts/line-bot.md](./contracts/line-bot.md)）
+コードを変えたら 3〜5 をやり直す（Amplify に再アップロードしないと反映されない）。
+
+### 4-3. Bot とリッチメニュー
+
+1. `kakeibo-webhook` の環境変数 `LIFF_URL` に、4-2 の 1 の LIFF URL を設定する
+2. LINE Official Account Manager → リッチメニューで 3 ボタンを作成（[contracts/line-bot.md](./contracts/line-bot.md)）。Bot（Messaging API のチャネル）は、ミニアプリと同じ @fumi217 さんのプロバイダーのものを使う
 
 ## 5. 動作確認（本番・スマホの LINE）
 
@@ -116,5 +128,5 @@ API の仕様は [contracts/api.md](./contracts/api.md)。
 |---|---|
 | LINE で返事がない | CloudWatch ログ。`Task timed out` ならタイムアウト 30 秒、エラーなら内容を確認。**コード変更後に Deploy / zip 再アップロードしたか** |
 | 画面で `CORS` エラー | `kakeibo-api` の関数 URL の CORS 設定と `ALLOWED_ORIGIN` が Amplify の URL と一致しているか（末尾の `/` に注意） |
-| LIFF が開かない | LIFF のエンドポイント URL が HTTPS の Amplify URL か。`VITE_LIFF_ID` が正しいか |
+| LIFF が開かない | ミニアプリの「開発用」エンドポイント URL が HTTPS の Amplify URL か。`VITE_LIFF_ID` が「開発用」の LIFF ID か。自分がチャネルの権限設定に入っているか |
 | sunabar が 401 | `SUNABAR_ACCESS_TOKEN` の値と、個人口座のトークンか（法人ではない） |
