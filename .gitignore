@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# secrets (LINE channel token, sunabar access token, etc.)
+.env
+.env.*
+!.env.example
+
+# build outputs / Lambda deploy packages
+dist/
+*.zip
+
+# OS / editor
+.DS_Store
+.vscode/
