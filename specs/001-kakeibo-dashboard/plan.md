@@ -30,7 +30,7 @@ sunabar（GMO あおぞらネット銀行の API 実験場）の入出金明細�
 ```
 
 - 2 つの Lambda は**同じ zip（同じソースコード）**を使い、ハンドラー名だけ変える。
-- 集計処理（`services/summary.js`）を LINE Bot とダッシュボードで共有し、表示金額の一致（FR-027 / SC-004）を担保する。
+- 集計の入口は `services/summary.js` の **`getMonthlySummary(month, now)` 1 つだけ**（明細の取得 → 予算の取得 → 集計）。LINE Bot（`handlers/webhook.js`）とダッシュボード（`routes/summary.js`）の両方がこれを呼び、表示金額の一致（FR-027 / SC-004）を担保する。
 
 ## Technical Context
 
@@ -42,7 +42,7 @@ sunabar（GMO あおぞらネット銀行の API 実験場）の入出金明細�
 
 **Storage**: なし。予算・カテゴリ判定ルール・ダミー明細はリポジトリ内 JSON（[R-010](./research.md#r-010-データ保存)）
 
-**Testing**: バックエンド `node --test`、フロントエンド Vitest（[R-012](./research.md#r-012-テスト)）
+**Testing**: バックエンド `node --test`（純粋な関数のみ）。フロントエンドは手動の動作確認（[R-012](./research.md#r-012-テスト)）
 
 **Target Platform**: AWS Lambda（関数 URL）/ AWS Amplify Hosting / スマートフォンの LINE アプリ（LIFF）
 
@@ -103,11 +103,17 @@ backend/
 ├── src/
 │   ├── handlers/
 │   │   ├── webhook.js           # Lambda: kakeibo-webhook（LINE Webhook）
-│   │   └── api.js               # Lambda: kakeibo-api（ダッシュボード API・/mock/* ルーティング）
+│   │   └── api.js               # Lambda: kakeibo-api（ルート表だけ。処理は routes/ に委譲）
+│   ├── routes/                  # API ごとの処理（1 ファイル 1 担当。ルートを増やしても api.js で衝突しない）
+│   │   ├── summary.js           # GET /api/summary
+│   │   ├── transactions.js      # GET /api/transactions
+│   │   ├── mockCategorize.js    # GET /mock/categorize
+│   │   ├── mockBudget.js        # GET /mock/budget
+│   │   └── mockUnifiedAccounts.js # GET /mock/unified-accounts
 │   ├── services/
 │   │   ├── sunabar.js           # sunabar API 呼び出し（fetch・ページング）
 │   │   ├── transactions.js      # 明細の取得・正規化・統合（sunabar + 他行）
-│   │   ├── summary.js           # 月次サマリーの集計（Bot とダッシュボードで共有）
+│   │   ├── summary.js           # getMonthlySummary（集計の入口）と buildMonthlySummary（純粋関数）。Bot とダッシュボードで共有
 │   │   └── flexMessage.js       # 月次サマリー → Flex Message 変換
 │   ├── mock/                    # 自作 API（発表対象）
 │   │   ├── categorize.js        # 支出カテゴリ判定 API
@@ -198,11 +204,18 @@ frontend/
 | | **A: LINE Bot ＋ 予算**（@fumi217） | **B: ダッシュボード ＋ 統一 ID**（@masuda-yu1019） |
 |---|---|---|
 | 担当ストーリー | US1（LINE サマリー）、US3（予算） | US2（ダッシュボード）、US4（統一 ID） |
-| バックエンド | `services/sunabar.js`, `services/summary.js`, `lib/month.js`, `handlers/webhook.js`, `services/flexMessage.js`, `mock/budget.js` | `handlers/api.js`, `services/transactions.js`, `mock/categorize.js`, `mock/unifiedAccounts.js`, `lib/http.js`, `local/server.js` |
+| バックエンド | `services/sunabar.js`, `services/summary.js`, `lib/month.js`, `handlers/webhook.js`, `services/flexMessage.js`, `mock/budget.js`, `routes/mockBudget.js`, `scripts/package.sh` | `handlers/api.js`, `routes/{summary,transactions,mockCategorize,mockUnifiedAccounts}.js`, `services/transactions.js`, `mock/categorize.js`, `mock/unifiedAccounts.js`, `lib/http.js`, `local/server.js` |
 | フロントエンド | `components/BudgetList.jsx` | `main.jsx`, `App.jsx`, `api/client.js`, `hooks/`, `MonthSwitcher` / `SummaryCards` / `CategoryPieChart` / `DailyBarChart` / `TransactionList` |
 | LINE / AWS 設定 | Messaging API（Webhook）、リッチメニュー、Lambda `kakeibo-webhook` | LINE ミニアプリ（開発用の LIFF・エンドポイント URL）、Amplify Hosting、Lambda `kakeibo-api` |
 | 発表する自作 API | 予算 API | 支出カテゴリ判定 API、統一 ID 他行明細 API |
 | PR レビュアー | @masuda-yu1019 | @fumi217 |
+
+### ファイル単位の担当
+
+上の表のファイルは、**土台（スケルトン）PR（tasks.md Phase 2）で B が関数の形とスタブを全部作り**、以後は表の担当者だけが編集する。
+- `handlers/api.js` のルート表・`local/server.js` の振り分け・`App.jsx` のコンポーネント配置は土台で確定させ、以後は 2 人の合意なしに変えない
+- `package.json` / `package-lock.json` は backend を A、frontend を B が変更する（依存の追加は単独の PR）
+- タスクの一覧と進め方は [tasks.md](./tasks.md)
 
 ### ぶつからないための約束
 

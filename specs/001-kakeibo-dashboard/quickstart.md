@@ -67,7 +67,7 @@ API の仕様は [contracts/api.md](./contracts/api.md)。
 | L4 | カテゴリ判定 API | `curl "http://localhost:3000/mock/categorize?description=ATM"` | `category: "現金"` |
 | L5 | ダッシュボード表示 | ブラウザで http://localhost:5173 | 円グラフ・日別グラフ・明細一覧が表示され、合計が L1 と一致 |
 | L6 | 月切替・絞り込み | 画面で「前の月」、円グラフの「食費」を押す | 表示が切り替わり、明細が絞り込まれる |
-| L7 | ユニットテスト | `docker compose run --rm backend npm test`、`docker compose run --rm frontend npm test` | すべて pass |
+| L7 | ユニットテスト（backend の純粋な関数） | `docker compose run --rm backend npm test` | すべて pass |
 
 ## 4. デプロイ（担当者のみ）
 

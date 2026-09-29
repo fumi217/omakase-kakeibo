@@ -100,6 +100,6 @@ plan.md の Technical Context で未確定だった点の調査結果と、技�
 
 ## R-012: テスト
 
-- **Decision**: バックエンドは Node.js 組み込みのテストランナー（`node --test`）、フロントエンドは Vitest。テスト対象は集計・カテゴリ判定・予算判定など、外部 API に依存しない純粋な関数を優先する。
+- **Decision**: バックエンドは Node.js 組み込みのテストランナー（`node --test`）。テスト対象は月の変換・集計・カテゴリ判定・予算判定など、外部 API に依存しない純粋な関数。フロントエンドは純粋な関数が少なく期間も短いため、自動テストは書かず手動の動作確認（quickstart）で代替する（PR #42 のレビューで決定）。
 - **Rationale**: 追加の依存が少なく、Docker 内でそのまま動く。銀行 API を呼ぶ部分は、sunabar のレスポンス例（fixture）を使ってテストする。
-- **Alternatives considered**: Jest — Vite プロジェクトとの相性で Vitest を選択。E2E テスト（Playwright）— 期間内では手動のデモ確認で代替する。
+- **Alternatives considered**: フロントエンドに Vitest — 画面側の純粋な関数が少なく効果が小さいため見送り。E2E テスト（Playwright）— 期間内では手動のデモ確認で代替する。
