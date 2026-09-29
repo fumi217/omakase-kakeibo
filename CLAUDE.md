@@ -44,6 +44,7 @@
   ```
 
 - sunabar は金額を文字列（`"30000"`）で返す。取得直後に `Number()` で数値にする。
+- 依存を追加・更新したら、`package-lock.json` に全 CPU 向けのバイナリ（例: `@rolldown/binding-linux-x64-gnu` と `-linux-arm64-gnu`）が残っているか確認する。Mac（arm64）と WSL（x86_64）で開発しているため、片方しか記録されないと相手の環境で起動しない（npm/cli#4828。#17）。消えていたら、`node_modules` のない使い捨てコンテナで `npm install --package-lock-only` を実行して作り直す。
 - Lambda の注意点（Day1 のハンズオンで確認済み）
   - タイムアウトは **30 秒**にする（初期値 3 秒では sunabar API が間に合わない）。
   - コードを変えたら **Deploy（zip の再アップロード）を忘れない**。反映されていないことが原因のトラブルが多い。
