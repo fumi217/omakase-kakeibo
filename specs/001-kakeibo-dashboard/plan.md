@@ -249,9 +249,14 @@ frontend/
 
 ## チームで決めたこと・未確定事項
 
-- デプロイ先 AWS アカウント: 代表者 1 名のアカウントに集約するか（推奨: 発表用に 1 つに集約し、他のメンバーは Docker のローカル環境で開発）。
+- ✅ **決定（2026-09-30）** デプロイ先の AWS アカウントは**担当ごとに自分のアカウント**にする（AWS のパスワードやアクセスキーを共有しないため）。
+  - @masuda-yu1019 の AWS: Amplify Hosting（#30）、Lambda `kakeibo-api`（#37）
+  - @fumi217 の AWS: Lambda `kakeibo-webhook`（#26）
+  - 画面は関数 URL で API を呼ぶだけなので、アカウントが分かれていても動く（`kakeibo-api` の CORS で Amplify の URL を許可する）
 - ✅ **決定（2026-09-29）** LINE の Bot（Messaging API）と LIFF（LINE ミニアプリ）は、**@fumi217 さんのプロバイダー**にそろえる。プロバイダーが違うと同じ人でも LINE のユーザー ID が別になるため。@masuda-yu1019 はチャネルの「権限設定」で追加済み。LIFF はミニアプリの「開発用」内部チャネルを使う（research R-007）。
-- 各メンバーの sunabar トークン: ローカル開発では各自の sunabar 口座を使ってよい（デモは代表者の口座）。
+- ✅ **決定（2026-09-30）** sunabar のトークン: ローカル開発では各自の sunabar 口座を使う。**デプロイした 2 つの Lambda（`kakeibo-webhook` と `kakeibo-api`）には、デモ用に @fumi217 さんの sunabar 口座の `SUNABAR_ACCESS_TOKEN` と `SUNABAR_ACCOUNT_ID` を設定する**（別の口座だと LINE のカードとダッシュボードの金額がずれる。FR-027）。
+  - @masuda-yu1019 の AWS にある `kakeibo-api` へは、**対面のときに @fumi217 さんが Lambda の画面で直接入力**する（トークンを誰にも渡さない。チャット・Issue・PR に貼らない）
+  - 念のため、講座の終了後に sunabar ポータルでトークンを更新（古いトークンを無効化）する
 
 ## Complexity Tracking
 
