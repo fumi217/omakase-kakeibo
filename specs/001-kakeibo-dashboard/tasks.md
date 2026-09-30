@@ -50,18 +50,18 @@
 
 ### S0 土台（Issue #21）【B】作成・【A】レビュー
 
-- [ ] T005 【B】`POST /webhook` を webhook ハンドラー、それ以外を api ハンドラーに振り分ける backend/local/server.js
-- [ ] T006 [P] 【B】200 を返すだけの Webhook スタブ（以後の担当 A）backend/src/handlers/webhook.js
-- [ ] T007 【B】ルート表に `/api/health`・`/api/summary`・`/api/transactions`・`/mock/categorize`・`/mock/budget`・`/mock/unified-accounts` を全部登録し、処理は routes に委譲 backend/src/handlers/api.js
-- [ ] T008 [P] 【B】各ルートのスタブ（501 `NOT_IMPLEMENTED`、`/api/summary` だけ fixture を返す）backend/src/routes/{summary,transactions,mockCategorize,mockBudget,mockUnifiedAccounts}.js
-- [ ] T009 [P] 【B】`parseMonth("YYYY-MM")` → 日本時間の `{ from, to }`（形式不正は `INVALID_MONTH`）、`currentMonth(now)`・`previousMonth(month)`（Lambda は UTC なので日本時間で計算。月初 0〜9 時のずれに注意）（本実装＋テスト。以後の担当 A）backend/src/lib/month.js・backend/tests/unit/month.test.js
-- [ ] T010 [P] 【B】`buildMonthlySummary(month, transactions, budgets, now = new Date())`（純粋関数）と、**集計の入口を 1 つにまとめた `getMonthlySummary(month, now = new Date())`**（明細の取得 → 予算の取得 → 集計。Webhook と `routes/summary.js` の両方がこれだけを呼ぶ）のスタブ（fixture を返す。以後の担当 A）backend/src/services/summary.js・backend/tests/fixtures/summary.sample.json
-- [ ] T011 [P] 【B】`fetchTransactions(accountId, from, to)` のスタブ（空配列。以後の担当 A）backend/src/services/sunabar.js
-- [ ] T012 [P] 【B】`getTransactions(month)` = sunabar の結果を返すだけ（以後の担当 B）backend/src/services/transactions.js
-- [ ] T013 [P] 【B】スタブ: `categorize()` は常に `{ category: "その他", merchant: null, matchedKeyword: null }`（担当 B）、`getBudgets()` は空（担当 A）、`getUnifiedTransactions()` は空（担当 B）backend/src/mock/{categorize,budget,unifiedAccounts}.js
-- [ ] T014 【B】画面の骨組み（`SummaryCards`・`MonthSwitcher`・`CategoryPieChart`・`DailyBarChart`・**`BudgetList`**・`TransactionList` を配置。各コンポーネントは空のスタブ。`BudgetList.jsx` の担当は A）frontend/src/App.jsx・frontend/src/components/*.jsx
-- [ ] T015 [P] 【B】`getSummary(month)`・`getTransactions(month, category)` frontend/src/api/client.js
-- [ ] T016 【B】Project Structure に `backend/src/routes/` を追加、ファイル単位の担当表と整合を確認 specs/001-kakeibo-dashboard/plan.md
+- [x] T005 【B】`POST /webhook` を webhook ハンドラー、それ以外を api ハンドラーに振り分ける backend/local/server.js
+- [x] T006 [P] 【B】200 を返すだけの Webhook スタブ（以後の担当 A）backend/src/handlers/webhook.js
+- [x] T007 【B】ルート表に `/api/health`・`/api/summary`・`/api/transactions`・`/mock/categorize`・`/mock/budget`・`/mock/unified-accounts` を全部登録し、処理は routes に委譲 backend/src/handlers/api.js
+- [x] T008 [P] 【B】各ルートのスタブ（501 `NOT_IMPLEMENTED`、`/api/summary` だけ fixture を返す）backend/src/routes/{summary,transactions,mockCategorize,mockBudget,mockUnifiedAccounts}.js
+- [x] T009 [P] 【B】`parseMonth("YYYY-MM")` → 日本時間の `{ from, to }`（形式不正は `INVALID_MONTH`）、`currentMonth(now)`・`previousMonth(month)`（Lambda は UTC なので日本時間で計算。月初 0〜9 時のずれに注意）（本実装＋テスト。以後の担当 A）backend/src/lib/month.js・backend/tests/unit/month.test.js
+- [x] T010 [P] 【B】`buildMonthlySummary(month, transactions, budgets, now = new Date())`（純粋関数）と、**集計の入口を 1 つにまとめた `getMonthlySummary(month, now = new Date())`**（明細の取得 → 予算の取得 → 集計。Webhook と `routes/summary.js` の両方がこれだけを呼ぶ）のスタブ（fixture を返す。以後の担当 A）backend/src/services/summary.js・backend/tests/fixtures/summary.sample.json
+- [x] T011 [P] 【B】`fetchTransactions(accountId, from, to)` のスタブ（空配列。以後の担当 A）backend/src/services/sunabar.js
+- [x] T012 [P] 【B】`getTransactions(month)` = sunabar の結果を返すだけ（以後の担当 B）backend/src/services/transactions.js
+- [x] T013 [P] 【B】スタブ: `categorize()` は常に `{ category: "その他", merchant: null, matchedKeyword: null }`（担当 B）、`getBudgets()` は空（担当 A）、`getUnifiedAccounts(unifiedId, month)` は空（担当 B）backend/src/mock/{categorize,budget,unifiedAccounts}.js
+- [x] T014 【B】画面の骨組み（`SummaryCards`・`MonthSwitcher`・`CategoryPieChart`・`DailyBarChart`・**`BudgetList`**・`TransactionList` を配置。各コンポーネントは空のスタブ。`BudgetList.jsx` の担当は A）frontend/src/App.jsx・frontend/src/components/*.jsx
+- [x] T015 [P] 【B】`getSummary(month)`・`getTransactions(month, category)` frontend/src/api/client.js
+- [x] T016 【B】Project Structure に `backend/src/routes/` を追加、ファイル単位の担当表と整合を確認 specs/001-kakeibo-dashboard/plan.md
 
 ### A0 公式アカウント「家計簿」と Messaging API（Issue #43）【A】— **土台と並行してよい**
 

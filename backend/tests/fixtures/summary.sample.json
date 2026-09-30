@@ -1,0 +1,17 @@
+{
+  "month": "2026-10",
+  "totalIncome": 300000,
+  "totalExpense": 45000,
+  "transactionCount": 7,
+  "categories": [
+    { "category": "住居", "amount": 30000, "ratio": 0.667, "budget": 30000, "usage": 1.0, "status": "warning" },
+    { "category": "食費", "amount": 12000, "ratio": 0.267, "budget": 30000, "usage": 0.4, "status": "normal" },
+    { "category": "その他", "amount": 3000, "ratio": 0.067, "budget": null, "usage": null, "status": null }
+  ],
+  "daily": [
+    { "date": "2026-10-01", "expense": 0 },
+    { "date": "2026-10-02", "expense": 30000 }
+  ],
+  "sources": [{ "id": "sunabar", "name": "sunabar", "kind": "bank" }],
+  "generatedAt": "2026-10-02T10:00:00+09:00"
+}

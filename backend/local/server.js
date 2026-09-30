@@ -3,6 +3,12 @@
 // これで、同じハンドラーのコードをそのまま Lambda にデプロイできる。
 const http = require("node:http");
 const api = require("../src/handlers/api");
+const webhook = require("../src/handlers/webhook");
+
+// Lambda では関数が 2 つ（kakeibo-webhook / kakeibo-api）に分かれる。ローカルではパスで振り分ける
+function pickHandler(method, pathname) {
+  return method === "POST" && pathname === "/webhook" ? webhook : api;
+}
 
 const PORT = Number(process.env.PORT ?? 3000);
 // Lambda では関数 URL の CORS 設定で許可する。ローカルでは同じ動きをここで再現する
@@ -40,7 +46,7 @@ const server = http.createServer(async (req, res) => {
   const event = toFunctionUrlEvent(req, Buffer.concat(chunks).toString() || undefined);
 
   try {
-    const result = await api.handler(event);
+    const result = await pickHandler(req.method, event.rawPath).handler(event);
     res.writeHead(result.statusCode, { ...corsHeaders, ...result.headers });
     res.end(result.body);
   } catch (err) {
