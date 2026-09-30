@@ -94,7 +94,7 @@
 
 ### A3 backend に @line/bot-sdk を追加する（Issue #24）
 
-- [ ] T022 【A】`@line/bot-sdk` を追加し、ロックを使い捨てコンテナで生成 backend/package.json・backend/package-lock.json
+- [x] T022 【A】`@line/bot-sdk` を追加し、ロックを使い捨てコンテナで生成 backend/package.json・backend/package-lock.json
 
 ### A4 Webhook と Flex Message（Issue #25）
 
