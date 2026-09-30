@@ -28,10 +28,20 @@ plan.md の Technical Context で未確定だった点の調査結果と、技�
 
 - **Decision**: `GET https://api.sunabar.gmo-aozora.com/personal/v1/accounts/transactions` を使い、`accountId`・`dateFrom`・`dateTo`（`YYYY-MM-DD`）を指定する。レスポンスの `hasNext` が真の間、`nextItemKey` を付けて再取得する。
 - **Rationale**: 月単位の集計に必要な全明細を取得できる唯一の API。
-- **要確認（実装開始時に Postman で実レスポンスを確認すること）**:
-  - 明細配列のキー名（`transactions` を想定）と各項目名（`transactionDate`, `transactionType`（`1`: 入金 / `2`: 出金）, `amount`, `remarks`, `balance`, `itemKey` を想定）
-  - 1 回の取得件数上限とページングのキー名（`hasNext`, `nextItemKey` を想定）
-  - つかいわけ口座間振替が明細にどう表示されるか（FR-004 の除外判定に使う摘要の文言）
+- **確認結果（2026-09-30、Postman の実レスポンスと API 仕様書 個人・個人事業主口座編 p.14〜17）**: 実レスポンスは `backend/tests/fixtures/sunabar-transactions.sample.json`（fixture の中の口座 ID は仕様書の例の値、振込先名は架空の名前に置き換えている。アプリが照会に使う口座 ID は `.env` の `SUNABAR_ACCOUNT_ID`）
+  - 明細は `transactions` 配列。各項目は `transactionDate`・`valueDate`・`transactionType`（`"1"`: 入金 / `"2"`: 出金）・`amount`・`remarks`・`balance`・`itemKey`。金額・件数はすべて文字列
+  - ページングは `hasNext` と `nextItemKey`。`hasNext` が真のとき、返ってきた `nextItemKey` を次のリクエストのクエリに付ける（`hasNext` が偽のときは `nextItemKey` 自体がない）。1 回の取得上限は 500 件（仕様書 p.17）
+  - ⚠️ **`hasNext` は仕様書では真偽値（`true`）だが、sunabar の実レスポンスは文字列（`"false"`）**。`if (data.hasNext)` だと `"false"` も真になり取得が止まらないため、`true` と `"true"` の両方を真として扱う
+  - `remarks` と `itemKey` は、該当データがない場合は項目ごと省略される（つかいわけ口座の明細は `itemKey` なし）。`amount` はマイナスを含むことがある
+  - 並び順は古い順（取引日・`itemKey` の昇順）
+  - 摘要の例: `ATM セブン`（入金・出金の両方に出る）、`振込 スナバ　タロウ`（振込先名の間は全角スペース）。店舗名は出ない（R-004 のとおり）
+  - **つかいわけ口座間の振替は、照会に使う口座 ID によって出方が変わる**（口座 ID は 2 種類ある。仕様書 p.8・p.14）
+    | `accountId` | 振替の明細 | `itemKey` | 残高 |
+    |---|---|---|---|
+    | 12 桁の口座 ID（例 `3020…`） | 出ない | あり | 親口座と子口座の合計 |
+    | つかいわけ口座 ID（例 `SP3020…`。親口座にも子口座にもある） | 出る（例: 出金 `"2"`、摘要 `振替 貯蓄用`＝子口座の名前） | なし | その口座だけ |
+  - **Decision（FR-004）**: 12 桁の口座 ID（`SUNABAR_ACCOUNT_ID`）で照会する。つかいわけ口座間の振替は明細に出ないので、振替の除外を自前で判定する必要がない。sunabar の明細の `isInternalTransfer` は常に `false`。`itemKey` も必ずあるので、Transaction の `id`（`sunabar:{itemKey}`）がそのまま作れる
+    - つかいわけ口座 ID で照会する場合は、摘要の先頭が `振替 ` の明細を振替として除外し、`itemKey` がないため `id` を別の方法で作る必要がある（今回は採らない）
 - **Alternatives considered**: 残高照会 API の差分から支出を推計 — 明細の内容が分からずカテゴリ判定できないため不採用。
 
 ## R-004: sunabar の明細データの性質とカテゴリ判定
