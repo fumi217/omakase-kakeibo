@@ -1,0 +1,251 @@
+/* ダッシュボード全体の見た目【担当 B】（#69）
+   主役（今月の支出）はカードに入れず大きく置き、ほかは 1 枚のパネルを罫線で区切る。色は意味があるときだけ使う */
+:root {
+  color-scheme: light;
+  --bg: #f4f1eb;
+  --panel: #fbfaf7;
+  --line: #e6e0d5;
+  --text: #23211d;
+  --muted: #45403a; /* 補助の文字も読みやすさを優先して濃いめにそろえる */
+  --faint: #a39d93;
+  --accent: #a8843a;
+  --positive: #4f7a5a;
+  --warning: #d97706; /* LINE のカードと同じ（#67） */
+  --danger: #dc2626;
+  --track: #ebe6dc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* 金額は桁をそろえる */
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 12px;
+}
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+}
+
+/* 見出し（控えめ）と月の切り替え */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.month-switcher {
+  display: flex;
+  align-items: center;
+}
+
+.month-switcher button {
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  background: none;
+  font-size: 18px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.month-switcher button:disabled {
+  color: var(--line);
+  cursor: default;
+}
+
+/* 主役: 今月の支出と予算 */
+.hero {
+  padding: 24px 0 32px;
+}
+
+.hero-amount {
+  margin: 2px 0 20px;
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.budget-bar {
+  position: relative;
+  height: 6px;
+  margin: 10px 0 8px;
+  background: var(--track);
+  border-radius: 3px;
+}
+
+.budget-bar > .fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+/* 今日の目安の位置（月の経過日数 / 日数） */
+.budget-bar > .marker {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 14px;
+  background: var(--text);
+}
+
+/* 補助指標: カードにせず 1 行（スマホは 2×2） */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+  margin: 24px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.stats dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stats dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+@media (min-width: 720px) {
+  .stats {
+    grid-template-columns: repeat(4, auto);
+    justify-content: start;
+    gap: 0;
+  }
+  .stats > div {
+    padding: 0 24px;
+    border-left: 1px solid var(--line);
+  }
+  .stats > div:first-child {
+    padding-left: 0;
+    border-left: none;
+  }
+}
+
+/* パネル: 1 枚の面を罫線でセクションに分ける */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.section {
+  padding: 20px 16px;
+  min-width: 0;
+}
+
+.section + .section {
+  border-top: 1px solid var(--line);
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* スマホ: HTML の順（取引 → 日別 → カテゴリ。優先順位どおり）に縦に並べる
+   パソコン: 日別を全幅にし、その下に取引とカテゴリの 2 列 */
+@media (min-width: 900px) {
+  .panel-body {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-areas:
+      "daily daily"
+      "tx category";
+  }
+  .section { padding: 24px; }
+  .panel-body > .section { border-top: 1px solid var(--line); }
+  .panel-body > .section-daily { grid-area: daily; border-top: none; }
+  .panel-body > .section-tx { grid-area: tx; }
+  .panel-body > .section-category { grid-area: category; border-left: 1px solid var(--line); }
+}
+
+/* カテゴリ別の細い棒（予算の使用率・支出の割合） */
+.usage-bar {
+  height: 4px;
+  margin-top: 6px;
+  background: var(--track);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.usage-bar > div {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* 使いみち不明（振込・現金）の棒は斜線にして、ほかのカテゴリと区別する */
+.usage-bar.unknown > div {
+  background: repeating-linear-gradient(135deg, #b9b2a6 0 3px, #d9d3c8 3px 6px);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.text-button {
+  padding: 4px 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.notice {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.notice.error {
+  color: var(--danger);
+}

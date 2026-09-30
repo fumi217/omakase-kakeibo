@@ -21,3 +21,8 @@ export function getTransactions(month, category) {
   if (category) query.set("category", category);
   return request(`/api/transactions?${query}`);
 }
+
+// month: "YYYY-MM" → { month, budgets: { [category]: 金額 } }（自作 API: 予算）
+export function getBudgets(month) {
+  return request(`/mock/budget?month=${encodeURIComponent(month)}`);
+}

@@ -18,30 +18,27 @@ export default function LiffHeader() {
     connect();
   }, [connect]);
 
-  switch (state.status) {
-    case "loading":
-      return <h1>家計簿ダッシュボード</h1>;
-    case "needsLogin":
-      return (
-        <header>
-          <h1>家計簿ダッシュボード</h1>
-          <p>LINE アプリから開くか、LINE でログインしてください。</p>
-          <button type="button" onClick={login}>
+  const title = state.status === "ready" ? `${state.profile.displayName}さんの家計簿` : "家計簿ダッシュボード";
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      {state.status === "needsLogin" && (
+        <p className="small muted" style={{ margin: "4px 0 0" }}>
+          LINE アプリから開くか、LINE でログインしてください。{" "}
+          <button type="button" className="text-button" onClick={login}>
             LINE でログイン
           </button>
-        </header>
-      );
-    case "error":
-      return (
-        <header>
-          <h1>家計簿ダッシュボード</h1>
-          <p>LINE との接続に失敗しました（{state.message}）</p>
-          <button type="button" onClick={connect}>
+        </p>
+      )}
+      {state.status === "error" && (
+        <p className="small muted" style={{ margin: "4px 0 0" }}>
+          LINE との接続に失敗しました（{state.message}）{" "}
+          <button type="button" className="text-button" onClick={connect}>
             もう一度試す
           </button>
-        </header>
-      );
-    default:
-      return <h1>{state.profile.displayName}さんの家計簿</h1>;
-  }
+        </p>
+      )}
+    </div>
+  );
 }

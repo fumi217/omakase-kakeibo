@@ -6,13 +6,13 @@ export default function MonthSwitcher({ month, onChange }) {
   const isCurrentMonth = month >= currentMonth();
 
   return (
-    <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0" }}>
-      <button type="button" onClick={() => onChange(addMonths(month, -1))}>
-        ‹ 前の月
+    <nav className="month-switcher">
+      <button type="button" onClick={() => onChange(addMonths(month, -1))} aria-label="前の月">
+        ‹
       </button>
-      <strong>{formatMonth(month)}</strong>
-      <button type="button" onClick={() => onChange(addMonths(month, 1))} disabled={isCurrentMonth}>
-        次の月 ›
+      <strong className="num">{formatMonth(month)}</strong>
+      <button type="button" onClick={() => onChange(addMonths(month, 1))} disabled={isCurrentMonth} aria-label="次の月">
+        ›
       </button>
     </nav>
   );

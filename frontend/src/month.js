@@ -22,3 +22,14 @@ export function formatMonth(month) {
 export function formatYen(amount) {
   return `¥${amount.toLocaleString("ja-JP")}`;
 }
+
+// 日本時間の今日の日付（1〜31）
+export function todayDate(now = new Date()) {
+  return Number(now.toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" }).slice(8, 10));
+}
+
+// "2026-02" → 28
+export function daysInMonth(month) {
+  const [year, mon] = month.split("-").map(Number);
+  return new Date(Date.UTC(year, mon, 0)).getUTCDate();
+}
