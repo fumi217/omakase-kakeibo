@@ -89,8 +89,8 @@
 
 ### A2 月次サマリーを集計する（Issue #23）
 
-- [ ] T020 【A】data-model.md どおりに実装: 振替（`isInternalTransfer`）を除外、`totalIncome` / `totalExpense`、カテゴリ別は支出の多い順、`ratio` は小数第 3 位で四捨五入、`daily` は 0 円の日も含む（今月は今日まで）、`sources`、`generatedAt`（+09:00）。「今日」は引数の `now` を使う。`getMonthlySummary` は `getTransactions(month)` → `getBudgets(month)` → `buildMonthlySummary(...)` の順に呼ぶ backend/src/services/summary.js
-- [ ] T021 [P] 【A】集計のテスト（0 件の月・振替除外・並び順・ratio・daily。`now` を固定して日付に依存しない）backend/tests/unit/summary.test.js
+- [x] T020 【A】data-model.md どおりに実装: 振替（`isInternalTransfer`）を除外、`totalIncome` / `totalExpense`、カテゴリ別は支出の多い順、`ratio` は小数第 3 位で四捨五入、`daily` は 0 円の日も含む（今月は今日まで）、`sources`、`generatedAt`（+09:00）。「今日」は引数の `now` を使う。`getMonthlySummary` は `getTransactions(month)` → `getBudgets(month)` → `buildMonthlySummary(...)` の順に呼ぶ backend/src/services/summary.js
+- [x] T021 [P] 【A】集計のテスト（0 件の月・振替除外・並び順・ratio・daily。`now` を固定して日付に依存しない）backend/tests/unit/summary.test.js
 
 ### A3 backend に @line/bot-sdk を追加する（Issue #24）
 

@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { parseMonth, currentMonth, previousMonth } = require("../../src/lib/month");
+const { parseMonth, currentMonth, previousMonth, jstDateTime } = require("../../src/lib/month");
 
 test("parseMonth は月の初日と末日を返す（うるう年を含む）", () => {
   assert.deepEqual(parseMonth("2026-10"), { from: "2026-10-01", to: "2026-10-31" });
@@ -17,6 +17,11 @@ test("parseMonth は形式が不正なら INVALID_MONTH", () => {
 test("currentMonth は日本時間で判定する（UTC の月末夜は日本時間では翌月）", () => {
   assert.equal(currentMonth(new Date("2026-09-30T20:00:00Z")), "2026-10");
   assert.equal(currentMonth(new Date("2026-09-30T14:59:59Z")), "2026-09");
+});
+
+test("jstDateTime は日本時間の日時を返す（UTC の 15 時以降は日本時間では翌日）", () => {
+  assert.equal(jstDateTime(new Date("2026-09-30T15:30:00Z")), "2026-10-01T00:30:00");
+  assert.equal(jstDateTime(new Date("2026-10-15T03:00:00Z")), "2026-10-15T12:00:00");
 });
 
 test("previousMonth は年をまたげる", () => {

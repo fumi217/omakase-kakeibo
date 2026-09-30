@@ -16,9 +16,15 @@ function parseMonth(month) {
   return { from: `${month}-01`, to: `${month}-${String(lastDay).padStart(2, "0")}` };
 }
 
+// 日本時間の "YYYY-MM-DDTHH:MM:SS"。UTC に 9 時間足してから切り出す
+// 「今月」「今日」の判定はすべてこれを通す（LINE とダッシュボードで境目をそろえるため）
+function jstDateTime(now = new Date()) {
+  return new Date(now.getTime() + JST_OFFSET_MS).toISOString().slice(0, 19);
+}
+
 // 日本時間での「今月」。例: UTC 2026-09-30T20:00Z は日本時間 10/1 5:00 なので "2026-10"
 function currentMonth(now = new Date()) {
-  return new Date(now.getTime() + JST_OFFSET_MS).toISOString().slice(0, 7);
+  return jstDateTime(now).slice(0, 7);
 }
 
 // "2026-01" → "2025-12"
@@ -29,4 +35,4 @@ function previousMonth(month) {
   return d.toISOString().slice(0, 7);
 }
 
-module.exports = { parseMonth, currentMonth, previousMonth };
+module.exports = { parseMonth, currentMonth, previousMonth, jstDateTime };
