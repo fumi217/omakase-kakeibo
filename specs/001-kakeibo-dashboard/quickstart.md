@@ -28,8 +28,8 @@ cd <リポジトリ>
 cp .env.example .env        # .env に各自のトークンを記入（.env は Git 管理外）
 git check-ignore .env       # 「.env」と表示されれば、コミット対象外になっている
 docker compose build
-docker compose run --rm backend npm install
-docker compose run --rm frontend npm install
+docker compose run --rm backend npm ci     # ロックファイルどおりに入れる（npm install はロックファイルを書き換えることがある）
+docker compose run --rm frontend npm ci
 ```
 
 ローカル開発時の `.env` の主な値:
