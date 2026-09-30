@@ -30,8 +30,22 @@ function buildDaily(month, expenses, now) {
   return daily;
 }
 
+// 小数第 3 位で四捨五入（ratio・usage の表示用）
+function round3(x) {
+  return Math.round(x * 1000) / 1000;
+}
+
+// 予算に対する使用率と状態（FR-031・data-model.md）。予算のないカテゴリは null
+// 状態は丸める前の値で判定する（1 円でも超えたら over にし、LINE の超過額の行と食い違わないように）
+function budgetStatus(amount, budget) {
+  if (!(budget > 0)) return { budget: null, usage: null, status: null };
+  const usage = amount / budget;
+  const status = usage > 1 ? "over" : usage >= 0.8 ? "warning" : "normal";
+  return { budget, usage: round3(usage), status };
+}
+
 // 純粋関数: 明細と予算から Monthly Summary を作る。「今日」は now で受け取る（テストで固定できるように）
-// 予算（budget / usage / status）は A6（#27・T046）で入れる。それまでは null
+// 予算があっても支出のないカテゴリは categories に出さない（支出があったカテゴリだけを並べる）
 function buildMonthlySummary(month, transactions, budgets, now = new Date()) {
   // 自分の口座間の振替は集計しない（FR-004）
   const targets = transactions.filter((t) => !t.isInternalTransfer);
@@ -48,10 +62,8 @@ function buildMonthlySummary(month, transactions, budgets, now = new Date()) {
     .map(([category, amount]) => ({
       category,
       amount,
-      ratio: Math.round((amount / totalExpense) * 1000) / 1000,
-      budget: null,
-      usage: null,
-      status: null,
+      ratio: round3(amount / totalExpense),
+      ...budgetStatus(amount, budgets[category]),
     }));
 
   const sources = [...new Map(targets.map((t) => [t.source.id, t.source])).values()];

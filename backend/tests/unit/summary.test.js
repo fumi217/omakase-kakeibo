@@ -46,7 +46,7 @@ test("入金合計・支出合計・件数を集計する（spec US1 シナリ�
   assert.equal(s.transactionCount, 7);
 });
 
-test("カテゴリ別は支出の多い順。ratio は小数第 3 位で四捨五入。予算は A6 まで null", () => {
+test("カテゴリ別は支出の多い順。ratio は小数第 3 位で四捨五入。予算がなければ budget / usage / status は null", () => {
   const s = buildMonthlySummary("2026-09", september, {}, NOW);
   const empty = { budget: null, usage: null, status: null };
   assert.deepEqual(s.categories, [
@@ -124,14 +124,58 @@ test("generatedAt は now を日本時間の ISO 8601（+09:00）で表す", () 
   assert.equal(s.generatedAt, "2026-10-15T12:00:00+09:00");
 });
 
+// 予算の状態（FR-031・data-model.md）: usage < 0.8 → normal、0.8 ≤ usage ≤ 1.0 → warning、1.0 < usage → over
+function foodBudget(amount, budget = 30000) {
+  const s = buildMonthlySummary("2026-09", [tx("2026-09-03", "expense", amount, "食費")], { 食費: budget }, NOW);
+  return s.categories[0];
+}
+
+test("予算があるカテゴリは budget と usage（小数第 3 位で四捨五入）を付ける", () => {
+  const c = foodBudget(10000);
+  assert.equal(c.budget, 30000);
+  assert.equal(c.usage, 0.333);
+});
+
+test("status の境目: 80% 未満は normal、80% ちょうどから warning（spec US3 シナリオ 1）", () => {
+  assert.equal(foodBudget(23999).status, "normal");
+  assert.equal(foodBudget(24000).status, "warning");
+  assert.equal(foodBudget(24000).usage, 0.8);
+});
+
+test("status: 90% は warning、100% ちょうども warning、103% は over（spec US3 の Independent Test）", () => {
+  assert.equal(foodBudget(27000).status, "warning");
+  assert.equal(foodBudget(30000).status, "warning");
+  assert.deepEqual(foodBudget(31000), { category: "食費", amount: 31000, ratio: 1, budget: 30000, usage: 1.033, status: "over" });
+});
+
+test("status は丸める前の値で判定する（1 円でも超えたら over。usage は 1 に丸まる）", () => {
+  const c = foodBudget(30001);
+  assert.equal(c.usage, 1);
+  assert.equal(c.status, "over");
+});
+
+test("予算があっても支出のないカテゴリは出さない。予算のないカテゴリは null（spec US3 シナリオ 3）", () => {
+  const s = buildMonthlySummary("2026-09", september, { 食費: 30000, 娯楽: 10000 }, NOW);
+  assert.deepEqual(
+    s.categories.map((c) => [c.category, c.budget, c.usage, c.status]),
+    [
+      ["住居", null, null, null],
+      ["食費", 30000, 0.4, "normal"],
+      ["交通", null, null, null],
+      ["その他", null, null, null],
+    ],
+  );
+});
+
 test("getMonthlySummary は明細と予算を取得して集計する（本番コードで fixture を読まない）", async (t) => {
   const getTransactions = t.mock.method(transactionsService, "getTransactions", async () => september);
-  const getBudgets = t.mock.method(budget, "getBudgets", async () => ({}));
+  const getBudgets = t.mock.method(budget, "getBudgets", async () => ({ 住居: 30000 }));
 
   const s = await getMonthlySummary("2026-09", NOW);
 
   assert.equal(getTransactions.mock.calls[0].arguments[0], "2026-09");
   assert.equal(getBudgets.mock.calls[0].arguments[0], "2026-09");
   assert.equal(s.totalExpense, 45000);
+  assert.equal(s.categories[0].status, "warning", "取得した予算を集計に使う");
   assert.equal(s.generatedAt, "2026-10-15T12:00:00+09:00");
 });

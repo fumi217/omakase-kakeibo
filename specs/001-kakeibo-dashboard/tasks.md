@@ -175,9 +175,9 @@
 
 ### A6 予算 API と集計への反映（Issue #27）
 
-- [ ] T044 【A】予算データと `getBudgets(month)`（`default` と月ごとの上書き）backend/src/mock/data/budgets.json・backend/src/mock/budget.js
-- [ ] T045 [P] 【A】`GET /mock/budget?month=`（`x-mock-api: true`）backend/src/routes/mockBudget.js
-- [ ] T046 【A】`buildMonthlySummary` でカテゴリ別の `budget` / `usage` / `status`（usage < 0.8 → normal、0.8 ≤ usage ≤ 1.0 → warning、1.0 < usage → over、予算なしは null）＋テスト backend/src/services/summary.js・backend/tests/unit/summary.test.js
+- [x] T044 【A】予算データと `getBudgets(month)`（`default` と月ごとの上書き）backend/src/mock/data/budgets.json・backend/src/mock/budget.js
+- [x] T045 [P] 【A】`GET /mock/budget?month=`（`x-mock-api: true`）backend/src/routes/mockBudget.js
+- [x] T046 【A】`buildMonthlySummary` でカテゴリ別の `budget` / `usage` / `status`（usage < 0.8 → normal、0.8 ≤ usage ≤ 1.0 → warning、1.0 < usage → over、予算なしは null）＋テスト backend/src/services/summary.js・backend/tests/unit/summary.test.js
 
 ### A7 予算の表示（Issue #28）
 

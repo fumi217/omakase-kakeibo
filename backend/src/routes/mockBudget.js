@@ -1,7 +1,10 @@
-// GET /mock/budget【担当 A】（contracts/api.md）
-// 土台（#21）のスタブ: 501 を返す。A6（#27）で実装する
-const { errorResponse } = require("../lib/http");
+// GET /mock/budget?month=【担当 A】（contracts/api.md）
+// 自作 API のため、本物の銀行 API と区別できるよう x-mock-api ヘッダーを付ける
+const { json } = require("../lib/http");
+const budget = require("../mock/budget");
 
 module.exports = async (event) => {
-  return errorResponse(501, "NOT_IMPLEMENTED", "まだ実装されていません");
+  const month = event.queryStringParameters?.month;
+  // month がない・不正なら getBudgets が INVALID_MONTH を投げる
+  return json(200, { month, budgets: await budget.getBudgets(month) }, { "x-mock-api": "true" });
 };

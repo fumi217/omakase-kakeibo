@@ -59,7 +59,7 @@ test("GET /mock/categorize は description がないと 400 INVALID_PARAMETER", 
 });
 
 test("未実装のルートは 501 NOT_IMPLEMENTED を返す（ルート表には登録済み）", async () => {
-  for (const path of ["/mock/budget", "/mock/unified-accounts"]) {
+  for (const path of ["/mock/unified-accounts"]) {
     const res = await handler(event("GET", path));
     assert.equal(res.statusCode, 501, path);
     assert.equal(JSON.parse(res.body).error.code, "NOT_IMPLEMENTED");
