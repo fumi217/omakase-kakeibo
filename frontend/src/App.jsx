@@ -30,7 +30,7 @@ export default function App() {
       <MonthSwitcher month={month} onChange={changeMonth} />
       {loading && <p>読み込み中…</p>}
       {error && <p>データを取得できませんでした（{error}）</p>}
-      <SummaryCards summary={summary} />
+      <SummaryCards summary={summary} error={error} />
       {/* 明細が 0 件の月は、グラフの代わりにメッセージを出す（spec US2 シナリオ 4） */}
       {isEmpty ? (
         <p>この月の入出金はありません</p>
@@ -45,7 +45,7 @@ export default function App() {
         </>
       )}
       <BudgetList categories={summary?.categories ?? []} />
-      <TransactionList month={month} category={category} />
+      <TransactionList month={month} category={category} onClearCategory={() => setCategory(null)} />
     </main>
   );
 }

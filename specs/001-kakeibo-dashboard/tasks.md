@@ -157,7 +157,7 @@
 
 ### B9 明細一覧（Issue #36）
 
-- [ ] T042 【B】明細一覧（日付・内容・金額・カテゴリ・出どころ、新しい順、絞り込み・解除、0 件の表示）frontend/src/components/TransactionList.jsx
+- [x] T042 【B】明細一覧（日付・内容・金額・カテゴリ・出どころ、新しい順、絞り込み・解除、0 件の表示）frontend/src/components/TransactionList.jsx
 
 ### B10 ダッシュボード API のデプロイ（Issue #37）
 
