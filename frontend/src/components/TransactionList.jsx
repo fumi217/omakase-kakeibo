@@ -7,11 +7,13 @@ import { formatYen } from "../month.js";
 export default function TransactionList({ month, category, onClearCategory }) {
   const [state, setState] = useState({ status: "loading", items: [] });
 
+  // 明細は月ごとに 1 回だけ取得し、カテゴリの絞り込みは画面側で行う
+  // （絞り込むたびに sunabar へ問い合わせると数秒かかるため。#66 のレビュー指摘 1）
   useEffect(() => {
-    // 月・カテゴリを切り替えたとき、古い応答が後から届いても捨てる
+    // 月を切り替えたとき、古い応答が後から届いても捨てる
     let ignore = false;
     setState({ status: "loading", items: [] });
-    getTransactions(month, category)
+    getTransactions(month)
       .then((data) => {
         if (!ignore) setState({ status: "ready", items: data.items ?? [] });
       })
@@ -21,9 +23,10 @@ export default function TransactionList({ month, category, onClearCategory }) {
     return () => {
       ignore = true;
     };
-  }, [month, category]);
+  }, [month]);
 
-  const { status, items } = state;
+  const { status } = state;
+  const items = category ? state.items.filter((t) => t.category === category) : state.items;
 
   return (
     <section>

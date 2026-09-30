@@ -152,8 +152,8 @@
 
 ### B8 グラフ（Issue #35）
 
-- [ ] T040 【B】カテゴリ別の円グラフ（選択で絞り込み）frontend/src/components/CategoryPieChart.jsx
-- [ ] T041 [P] 【B】日別の支出グラフ frontend/src/components/DailyBarChart.jsx
+- [x] T040 【B】カテゴリ別の円グラフ（選択で絞り込み）frontend/src/components/CategoryPieChart.jsx
+- [x] T041 [P] 【B】日別の支出グラフ frontend/src/components/DailyBarChart.jsx
 
 ### B9 明細一覧（Issue #36）
 
