@@ -61,6 +61,67 @@ test("支出の多いカテゴリは上位 3 つまで、順位と金額を付�
   assert.ok(!all.includes("4. その他"));
 });
 
+// 予算の状態つきのカテゴリ（summary.js の出力と同じ形）
+function cat(category, amount, budget = null, usage = null, status = null) {
+  return { category, amount, ratio: 0, budget, usage, status };
+}
+
+// Flex Message の入れ子から、指定した文言の text ノードを探す
+function findText(node, text) {
+  if (Array.isArray(node)) return node.map((n) => findText(n, text)).find(Boolean);
+  if (!node || typeof node !== "object") return undefined;
+  if (node.type === "text" && node.text === text) return node;
+  return findText(Object.values(node), text);
+}
+
+test("上位 3 件のうち注意・超過のカテゴリには ⚠ と使用率（%）を付ける。通常・予算なしには付けない", () => {
+  const categories = [
+    cat("住居", 30000, 30000, 1, "warning"),
+    cat("食費", 12000, 30000, 0.4, "normal"),
+    cat("その他", 3000),
+  ];
+  const message = summaryMessage(summary({ categories }), LIFF_URL);
+  const all = texts(message);
+
+  assert.ok(all.includes("⚠ 100%"));
+  assert.equal(all.filter((t) => t.startsWith("⚠")).length, 1);
+  assert.equal(findText(message, "⚠ 100%").color, "#d97706");
+});
+
+test("超過したカテゴリは「⚠ 交通が予算を ¥2,000 超過」の行を出す（spec US3 シナリオ 2・FR-032）", () => {
+  const categories = [cat("交通", 12000, 10000, 1.2, "over")];
+  const message = summaryMessage(summary({ categories }), LIFF_URL);
+  const all = texts(message);
+
+  assert.ok(all.includes("⚠ 120%"));
+  assert.equal(findText(message, "⚠ 120%").color, "#dc2626");
+  assert.ok(all.includes("⚠ 交通が予算を ¥2,000 超過"));
+});
+
+test("超過の行は、上位 3 件に入らないカテゴリも含めて、超過したカテゴリごとに出す", () => {
+  const categories = [
+    cat("住居", 70000, 60000, 1.167, "over"),
+    cat("食費", 20000, 30000, 0.667, "normal"),
+    cat("その他", 15000),
+    cat("交通", 10001, 10000, 1, "over"),
+  ];
+  const all = texts(summaryMessage(summary({ categories }), LIFF_URL));
+
+  assert.deepEqual(
+    all.filter((t) => t.includes("超過")),
+    ["⚠ 住居が予算を ¥10,000 超過", "⚠ 交通が予算を ¥1 超過"],
+  );
+  assert.ok(!all.includes("4. 交通"));
+});
+
+test("超過したカテゴリがなければ、超過の行は出さない", () => {
+  const categories = [cat("食費", 27000, 30000, 0.9, "warning")];
+  const all = texts(summaryMessage(summary({ categories }), LIFF_URL));
+
+  assert.ok(all.includes("⚠ 90%"));
+  assert.ok(!all.some((t) => t.includes("超過")));
+});
+
 test("明細が 0 件の月は、本文を「この月の入出金はありません」にする（月は見出しに出す）", () => {
   const empty = summary({ month: "2026-09", totalIncome: 0, totalExpense: 0, transactionCount: 0, categories: [] });
   const message = summaryMessage(empty, LIFF_URL);

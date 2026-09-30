@@ -1,9 +1,10 @@
 // LINE に返すメッセージを作る【担当 A】（contracts/line-bot.md）
-// Monthly Summary をそのまま使い、ここでは計算しない（金額を画面と一致させるため。FR-027）
-// 予算の超過の行（FR-032）は A6（#27・T047）で入れる
+// Monthly Summary をそのまま使い、集計はしない（金額を画面と一致させるため。FR-027）
 
 const TOP_CATEGORIES = 3;
 const MUTED = "#888888";
+// 予算の状態の色（ダッシュボードの BudgetList.jsx と同じ）
+const STATUS_COLOR = { warning: "#d97706", over: "#dc2626" };
 
 // "2026-09" → "2026年9月"
 function monthLabel(month) {
@@ -27,6 +28,35 @@ function row(label, value) {
   };
 }
 
+// 「1. 住居  ¥30,000  ⚠ 100%」。⚠ と使用率は注意・超過のカテゴリだけ（通常・予算なしは空けておく）
+function categoryRow(c, i) {
+  const color = STATUS_COLOR[c.status];
+  return {
+    type: "box",
+    layout: "horizontal",
+    contents: [
+      { type: "text", text: `${i + 1}. ${c.category}`, size: "sm", flex: 3 },
+      { type: "text", text: yen(c.amount), size: "sm", align: "end", flex: 2 },
+      color
+        ? { type: "text", text: `⚠ ${Math.round(c.usage * 100)}%`, size: "sm", align: "end", flex: 2, color }
+        : { type: "filler", flex: 2 },
+    ],
+  };
+}
+
+// 超過したカテゴリごとに「⚠ 交通が予算を ¥2,000 超過」（上位 3 件の外も含める。FR-032）
+function overLines(categories) {
+  return categories
+    .filter((c) => c.status === "over")
+    .map((c) => ({
+      type: "text",
+      text: `⚠ ${c.category}が予算を ${yen(c.amount - c.budget)} 超過`,
+      size: "sm",
+      color: STATUS_COLOR.over,
+      wrap: true,
+    }));
+}
+
 function note(text) {
   return { type: "text", text, size: "sm", color: MUTED, wrap: true };
 }
@@ -44,6 +74,7 @@ function summaryBody(summary) {
   if (summary.transactionCount === 0) return [note("この月の入出金はありません")];
 
   const top = summary.categories.slice(0, TOP_CATEGORIES);
+  const over = overLines(summary.categories);
   return [
     row("入金", yen(summary.totalIncome)),
     row("支出", yen(summary.totalExpense)),
@@ -51,7 +82,8 @@ function summaryBody(summary) {
     note("支出の多いカテゴリ"),
     ...(top.length === 0
       ? [note("支出はまだありません")]
-      : top.map((c, i) => row(`${i + 1}. ${c.category}`, yen(c.amount)))),
+      : top.map(categoryRow)),
+    ...(over.length > 0 ? [{ type: "separator" }, ...over] : []),
   ];
 }
 

@@ -181,8 +181,8 @@
 
 ### A7 予算の表示（Issue #28）
 
-- [ ] T047 【A】Flex Message に超過額の行（FR-032）backend/src/services/flexMessage.js
-- [ ] T048 [P] 【A】予算の使用率の一覧（注意・超過の表示）frontend/src/components/BudgetList.jsx
+- [x] T047 【A】Flex Message に超過額の行（FR-032）backend/src/services/flexMessage.js
+- [x] T048 [P] 【A】予算の使用率の一覧（注意・超過の表示）frontend/src/components/BudgetList.jsx
 
 **Checkpoint**: 画面と LINE カードに予算の超過が出る（quickstart P4）
 
