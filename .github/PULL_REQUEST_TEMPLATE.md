@@ -25,6 +25,7 @@ Closes #
 - [ ] 差分が 1,000 行以内（`git diff --stat main...HEAD` で確認。目安は 500 行以内）
 - [ ] 仕様（spec.md / contracts）と実装が一致している。変えた場合は仕様書も更新した
 - [ ] テストを実行して pass した
+- [ ] GitHub Actions（CI）が緑。赤いまま PR を出さない・マージしない
 - [ ] `@aitutor-review review` でレビューを依頼し、指摘に対応した（対応状況は下に記載）
 
 ## AI チューターレビューへの対応

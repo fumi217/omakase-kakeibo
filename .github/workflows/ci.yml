@@ -1,0 +1,28 @@
+# PR と main への push で backend のテスト（node --test）を実行する
+# テストは外部 API に依存しない純粋な関数だけなので、トークン等の Secrets は使わない
+# ブランチ保護が使えないため、赤いままマージしないことはチームの約束で守る（github-workflow スキル）
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22 # Lambda nodejs22.x・Docker イメージと同じメジャーバージョン
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npm test
