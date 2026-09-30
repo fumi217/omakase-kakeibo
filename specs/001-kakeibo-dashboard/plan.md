@@ -204,7 +204,7 @@ frontend/
 | | **A: LINE Bot ＋ 予算**（@fumi217） | **B: ダッシュボード ＋ 統一 ID**（@masuda-yu1019） |
 |---|---|---|
 | 担当ストーリー | US1（LINE サマリー）、US3（予算） | US2（ダッシュボード）、US4（統一 ID） |
-| バックエンド | `services/sunabar.js`, `services/summary.js`, `lib/month.js`, `handlers/webhook.js`, `services/flexMessage.js`, `mock/budget.js`, `routes/mockBudget.js`, `scripts/package.sh` | `handlers/api.js`, `routes/{summary,transactions,mockCategorize,mockUnifiedAccounts}.js`, `services/transactions.js`, `mock/categorize.js`, `mock/unifiedAccounts.js`, `lib/http.js`, `local/server.js` |
+| バックエンド | `services/sunabar.js`, `services/summary.js`, `lib/month.js`, `handlers/webhook.js`, `services/flexMessage.js`, `mock/budget.js`, `routes/mockBudget.js`, `mock/unifiedAccounts.js`, `routes/mockUnifiedAccounts.js`（#70 で B から移管）, `scripts/package.sh` | `handlers/api.js`, `routes/{summary,transactions,mockCategorize}.js`, `services/transactions.js`, `mock/categorize.js`, `lib/http.js`, `local/server.js` |
 | フロントエンド | `components/BudgetList.jsx` | `main.jsx`, `App.jsx`, `api/client.js`, `hooks/`, `MonthSwitcher` / `SummaryCards` / `CategoryPieChart` / `DailyBarChart` / `TransactionList` |
 | LINE / AWS 設定 | Messaging API（Webhook）、リッチメニュー、Lambda `kakeibo-webhook` | LINE ミニアプリ（開発用の LIFF・エンドポイント URL）、Amplify Hosting、Lambda `kakeibo-api` |
 | 発表する自作 API | 予算 API | 支出カテゴリ判定 API、統一 ID 他行明細 API |

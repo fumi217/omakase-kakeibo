@@ -188,16 +188,19 @@
 
 ---
 
-## Phase 6: User Story 4 - 統一 ID で他の金融機関も合算（Priority: P4）【B】
+## Phase 6: User Story 4 - 統一 ID で他の金融機関も合算（Priority: P4）【B】（ダミー明細と API の A8 は A）
 
 **Goal**: ダミーの他の金融機関の明細を sunabar と合算し、出どころを表示する
 
 **Independent Test**: `UNIFIED_ID_ENABLED=true` でダミーのカード明細が合算され、出どころのラベルが付く（spec US4）
 
-### B11 統一 ID 他行明細 API と合算（Issue #38）
+### A8 統一 ID のダミー明細と他行明細 API（Issue #70）— #38 から A に移管（予算とそろえるため）
 
-- [ ] T049 【B】ダミー明細（`{{MONTH}}` を対象月に置換。実在の会社名は使わない）と取得関数 backend/src/mock/data/unified-accounts.json・backend/src/mock/unifiedAccounts.js
-- [ ] T050 [P] 【B】`GET /mock/unified-accounts?unifiedId=&month=`（`x-mock-api: true`）backend/src/routes/mockUnifiedAccounts.js
+- [x] T049 【A】ダミー明細（`{{MONTH}}` を対象月に置換。実在の会社名は使わない。今日より後の日付は除く）と取得関数 backend/src/mock/data/unified-accounts.json・backend/src/mock/unifiedAccounts.js
+- [x] T050 [P] 【A】`GET /mock/unified-accounts?unifiedId=&month=`（`x-mock-api: true`）backend/src/routes/mockUnifiedAccounts.js
+
+### B11 統一 ID の他行明細を合算（Issue #38）
+
 - [ ] T051 【B】`UNIFIED_ID_ENABLED` のとき他行明細を Transaction に変換して合算（`categorize()`・`source`）backend/src/services/transactions.js
 
 ### B12 出どころの表示（Issue #39）
@@ -239,7 +242,7 @@
 - B1 → B2 → B3（Amplify 公開は B2 の後ならいつでも）
 - B4 は土台の後ならいつでも（A1 の `categorize()` はスタブのままで進められる）
 - B5 → B7 → B8・B9（B6 は B8 の前）→ B10（**A5 の `npm run package` が必要**）
-- A6 → A7、B11 → B12
+- A6 → A7、A8 → B11 → B12
 
 ### 相手を待たずに進めるための仮置き
 

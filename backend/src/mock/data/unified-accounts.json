@@ -1,0 +1,42 @@
+{
+  "unifiedId": "demo-user-0001",
+  "accounts": [
+    {
+      "institutionId": "card-a",
+      "institutionName": "○○カード",
+      "kind": "card",
+      "transactions": [
+        {"id": "card-a:1", "date": "{{MONTH}}-03", "amount": 6200, "description": "ｲｵﾝ"},
+        {"id": "card-a:2", "date": "{{MONTH}}-10", "amount": 4880, "description": "ｽｰﾊﾟｰ ｱｵｿﾞﾗ"},
+        {"id": "card-a:3", "date": "{{MONTH}}-12", "amount": 8000, "description": "JR ｷｯﾌﾟ"},
+        {"id": "card-a:4", "date": "{{MONTH}}-17", "amount": 3500, "description": "ﾆﾄﾘ"},
+        {"id": "card-a:5", "date": "{{MONTH}}-20", "amount": 5500, "description": "ﾓﾊﾞｲﾙ ﾂｳｼﾝﾘｮｳ"},
+        {"id": "card-a:6", "date": "{{MONTH}}-21", "amount": 2110, "description": "ｽｰﾊﾟｰ ｱｵｿﾞﾗ"},
+        {"id": "card-a:7", "date": "{{MONTH}}-24", "amount": 1490, "description": "ﾈｯﾄﾌﾘｯｸｽ"},
+        {"id": "card-a:8", "date": "{{MONTH}}-28", "amount": 6390, "description": "ｲｵﾝ"}
+      ]
+    },
+    {
+      "institutionId": "qr-a",
+      "institutionName": "△△ペイ",
+      "kind": "qr",
+      "transactions": [
+        {"id": "qr-a:1", "date": "{{MONTH}}-01", "amount": 1600, "description": "ｽｲｶ ﾁｬｰｼﾞ"},
+        {"id": "qr-a:2", "date": "{{MONTH}}-02", "amount": 430, "description": "ﾛｰｿﾝ"},
+        {"id": "qr-a:3", "date": "{{MONTH}}-05", "amount": 680, "description": "ｾﾌﾞﾝｲﾚﾌﾞﾝ"},
+        {"id": "qr-a:4", "date": "{{MONTH}}-08", "amount": 540, "description": "ﾛｰｿﾝ"},
+        {"id": "qr-a:5", "date": "{{MONTH}}-11", "amount": 520, "description": "ｾﾌﾞﾝｲﾚﾌﾞﾝ"},
+        {"id": "qr-a:6", "date": "{{MONTH}}-14", "amount": 820, "description": "ﾌｧﾐﾘｰﾏｰﾄ"},
+        {"id": "qr-a:7", "date": "{{MONTH}}-15", "amount": 2400, "description": "ﾀｸｼｰ"},
+        {"id": "qr-a:8", "date": "{{MONTH}}-16", "amount": 390, "description": "ﾌｧﾐﾏ"},
+        {"id": "qr-a:9", "date": "{{MONTH}}-18", "amount": 560, "description": "ｽﾀｰﾊﾞｯｸｽ"},
+        {"id": "qr-a:10", "date": "{{MONTH}}-19", "amount": 750, "description": "ﾏｸﾄﾞﾅﾙﾄﾞ"},
+        {"id": "qr-a:11", "date": "{{MONTH}}-21", "amount": 1090, "description": "ｶﾗｵｹ"},
+        {"id": "qr-a:12", "date": "{{MONTH}}-22", "amount": 610, "description": "ｽﾀｰﾊﾞｯｸｽ"},
+        {"id": "qr-a:13", "date": "{{MONTH}}-25", "amount": 680, "description": "ﾏｸﾄﾞﾅﾙﾄﾞ"},
+        {"id": "qr-a:14", "date": "{{MONTH}}-26", "amount": 800, "description": "ｾﾌﾞﾝｲﾚﾌﾞﾝ"},
+        {"id": "qr-a:15", "date": "{{MONTH}}-27", "amount": 640, "description": "ｾﾌﾞﾝｲﾚﾌﾞﾝ"}
+      ]
+    }
+  ]
+}
