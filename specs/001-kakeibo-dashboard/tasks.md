@@ -142,7 +142,7 @@
 
 ### B6 frontend にグラフライブラリを追加する（Issue #33）
 
-- [ ] T036 【B】`recharts` を追加し、ロックを使い捨てコンテナで生成 frontend/package.json・frontend/package-lock.json
+- [x] T036 【B】`recharts` を追加し、ロックを使い捨てコンテナで生成 frontend/package.json・frontend/package-lock.json
 
 ### B7 合計と月切替（Issue #34）
 
