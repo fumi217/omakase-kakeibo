@@ -1,0 +1,11 @@
+[
+  { "keywords": ["ATM"], "category": "現金" },
+  { "keywords": ["ヤチン", "家賃", "カンリヒ", "管理費"], "category": "住居" },
+  { "keywords": ["ケータイ", "携帯", "モバイル", "ドコモ", "ソフトバンク"], "category": "通信" },
+  { "keywords": ["スイカ", "SUICA", "パスモ", "PASMO", "JR", "タクシー"], "category": "交通" },
+  { "keywords": ["セブン", "ローソン", "ファミリーマート", "ファミマ"], "category": "食費", "merchant": "コンビニ" },
+  { "keywords": ["スーパー", "イオン", "マクドナルド", "スターバックス", "ショクヒン"], "category": "食費" },
+  { "keywords": ["ドラッグ", "マツキヨ", "ダイソー", "ニトリ"], "category": "日用品" },
+  { "keywords": ["ネットフリックス", "NETFLIX", "スポティファイ", "SPOTIFY", "シネマ", "カラオケ"], "category": "娯楽" },
+  { "keywords": ["振込", "フリコミ"], "category": "振込" }
+]

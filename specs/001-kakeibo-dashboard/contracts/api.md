@@ -104,10 +104,10 @@ Lambda `kakeibo-api` の関数 URL で公開する HTTP API。フロントエン
 | `description` | ✅ | `ｾﾌﾞﾝｲﾚﾌﾞﾝ ｼﾌﾞﾔ` |
 
 ```json
-{ "description": "ｾﾌﾞﾝｲﾚﾌﾞﾝ ｼﾌﾞﾔ", "category": "食費", "merchant": "コンビニ", "matchedKeyword": "ｾﾌﾞﾝ" }
+{ "description": "ｾﾌﾞﾝｲﾚﾌﾞﾝ ｼﾌﾞﾔ", "category": "食費", "merchant": "コンビニ", "matchedKeyword": "セブン" }
 ```
 
-一致しない場合は `"category": "その他", "merchant": null, "matchedKeyword": null`。
+一致しない場合は `"category": "その他", "merchant": null, "matchedKeyword": null`。`matchedKeyword` は判定ルールに書かれたキーワードそのもの（半角カナの摘要でも、ルールが `セブン` なら `セブン`）。`description` がないときは 400 `INVALID_PARAMETER`。
 
 **発表での提案ポイント**: 本来は銀行・カード会社が加盟店コードを持っており、明細に「業種」を付けて返せば、利用者側での推測は不要になる。
 

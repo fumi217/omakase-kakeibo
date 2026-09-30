@@ -40,8 +40,26 @@ test("GET /api/summary は month が不正なら 400 INVALID_MONTH（集計は�
   assert.equal(summary.getMonthlySummary.mock.callCount(), 0);
 });
 
+test("GET /mock/categorize は判定結果と x-mock-api ヘッダーを返す（contracts/api.md）", async () => {
+  const res = await handler(event("GET", "/mock/categorize", { description: "ATM セブン" }));
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.headers["x-mock-api"], "true");
+  assert.deepEqual(JSON.parse(res.body), {
+    description: "ATM セブン",
+    category: "現金",
+    merchant: null,
+    matchedKeyword: "ATM",
+  });
+});
+
+test("GET /mock/categorize は description がないと 400 INVALID_PARAMETER", async () => {
+  const res = await handler(event("GET", "/mock/categorize"));
+  assert.equal(res.statusCode, 400);
+  assert.equal(JSON.parse(res.body).error.code, "INVALID_PARAMETER");
+});
+
 test("未実装のルートは 501 NOT_IMPLEMENTED を返す（ルート表には登録済み）", async () => {
-  for (const path of ["/api/transactions", "/mock/categorize", "/mock/budget", "/mock/unified-accounts"]) {
+  for (const path of ["/api/transactions", "/mock/budget", "/mock/unified-accounts"]) {
     const res = await handler(event("GET", path));
     assert.equal(res.statusCode, 501, path);
     assert.equal(JSON.parse(res.body).error.code, "NOT_IMPLEMENTED");

@@ -127,13 +127,13 @@
 
 ### B3 Amplify に公開して LINE で開く（Issue #30）
 
-- [ ] T030 【B】本番ビルド → zip → Amplify（東京）に公開 → ミニアプリ「開発用」のエンドポイント URL を差し替え → LINE で開いて表示名を確認（quickstart 4-2）— コードの変更なし
+- [x] T030 【B】本番ビルド → zip → Amplify（東京）に公開 → ミニアプリ「開発用」のエンドポイント URL を差し替え → LINE で開いて表示名を確認（quickstart 4-2）— コードの変更なし
 
 ### B4 支出カテゴリ判定 API（Issue #31）
 
-- [ ] T031 【B】判定ルール（data-model.md の Category Rule。上から評価・全角/半角カナと大文字小文字を正規化）backend/src/mock/data/category-rules.json・backend/src/mock/categorize.js
-- [ ] T032 [P] 【B】`GET /mock/categorize?description=`（`x-mock-api: true` ヘッダー）backend/src/routes/mockCategorize.js
-- [ ] T033 [P] 【B】判定のテスト backend/tests/unit/categorize.test.js
+- [x] T031 【B】判定ルール（data-model.md の Category Rule。上から評価・全角/半角カナと大文字小文字を正規化）backend/src/mock/data/category-rules.json・backend/src/mock/categorize.js
+- [x] T032 [P] 【B】`GET /mock/categorize?description=`（`x-mock-api: true` ヘッダー）backend/src/routes/mockCategorize.js
+- [x] T033 [P] 【B】判定のテスト backend/tests/unit/categorize.test.js
 
 ### B5 ダッシュボード API（Issue #32）
 
