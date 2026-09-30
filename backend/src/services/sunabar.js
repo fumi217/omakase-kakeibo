@@ -4,8 +4,9 @@ const { HttpError } = require("../lib/http");
 const categorizer = require("../mock/categorize");
 
 const TRANSACTIONS_URL = "https://api.sunabar.gmo-aozora.com/personal/v1/accounts/transactions";
-// LINE への応答を 5 秒以内に返すため（SC-001）
-const TIMEOUT_MS = 4000;
+// Lambda の起動直後は、sunabar との最初の接続だけで約 3 秒かかる（温まった状態は 1 秒以内。research R-003）。
+// 4 秒では余裕がなくエラーになりうるため、遅れても返信が届く方を優先する（Lambda のタイムアウト 30 秒より十分短く）
+const TIMEOUT_MS = 8000;
 // 1 回 500 件。ページングが止まらないときの保険（plan.md「リスクと対策」）
 const MAX_PAGES = 5;
 const SOURCE = { id: "sunabar", name: "sunabar", kind: "bank" };

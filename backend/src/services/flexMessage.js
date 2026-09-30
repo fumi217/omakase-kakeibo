@@ -40,8 +40,8 @@ function dashboardFooter(liffUrl) {
 }
 
 function summaryBody(summary) {
-  const label = monthLabel(summary.month);
-  if (summary.transactionCount === 0) return [note(`${label}の入出金はありません`)];
+  // 月は見出しに出ているので、本文には繰り返さない（ダッシュボードの文言とそろえる。spec US2）
+  if (summary.transactionCount === 0) return [note("この月の入出金はありません")];
 
   const top = summary.categories.slice(0, TOP_CATEGORIES);
   return [

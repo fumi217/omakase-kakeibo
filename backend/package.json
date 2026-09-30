@@ -5,6 +5,7 @@
   "description": "家計簿ダッシュボードのバックエンド（AWS Lambda / Node.js 22）",
   "scripts": {
     "start": "node local/server.js",
+    "package": "sh scripts/package.sh",
     "test": "node --test"
   },
   "engines": {

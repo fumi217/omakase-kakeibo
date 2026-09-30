@@ -61,12 +61,13 @@ test("支出の多いカテゴリは上位 3 つまで、順位と金額を付�
   assert.ok(!all.includes("4. その他"));
 });
 
-test("明細が 0 件の月は、本文を「2026年9月の入出金はありません」にする", () => {
+test("明細が 0 件の月は、本文を「この月の入出金はありません」にする（月は見出しに出す）", () => {
   const empty = summary({ month: "2026-09", totalIncome: 0, totalExpense: 0, transactionCount: 0, categories: [] });
   const message = summaryMessage(empty, LIFF_URL);
   const all = texts(message);
 
-  assert.ok(all.includes("2026年9月の入出金はありません"));
+  assert.equal(all[0], "2026年9月の家計簿");
+  assert.ok(all.includes("この月の入出金はありません"));
   assert.ok(!all.includes("支出の多いカテゴリ"));
   assert.equal(message.altText, "2026年9月 支出 ¥0");
 });

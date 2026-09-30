@@ -84,7 +84,7 @@
 ### A1 sunabar の入出金明細を取得する（Issue #22）
 
 - [x] T017 【A】sunabar の入出金明細 API の実レスポンスを Postman で確認し、口座番号をダミーにして保存（research R-003 の「要確認」を確定）backend/tests/fixtures/sunabar-transactions.sample.json
-- [x] T018 【A】`fetch`・`res.ok` の確認・`hasNext` / `nextItemKey` で続きを取得（最大 5 回で打ち切りログ）、Transaction への変換（`id`=`sunabar:{itemKey}`、`transactionType` "1"→income / "2"→expense、金額は `Number()`、`categorize()` でカテゴリ、`isInternalTransfer`）、タイムアウト / エラーを `BANK_API_UNAVAILABLE` / `BANK_API_ERROR` に変換。入金（income）は `categorize()` を呼ばずカテゴリ `"入金"`（data-model）。sunabar の呼び出しは `AbortSignal.timeout(4000)`（LINE への応答 5 秒以内 SC-001 のため）backend/src/services/sunabar.js
+- [x] T018 【A】`fetch`・`res.ok` の確認・`hasNext` / `nextItemKey` で続きを取得（最大 5 回で打ち切りログ）、Transaction への変換（`id`=`sunabar:{itemKey}`、`transactionType` "1"→income / "2"→expense、金額は `Number()`、`categorize()` でカテゴリ、`isInternalTransfer`）、タイムアウト / エラーを `BANK_API_UNAVAILABLE` / `BANK_API_ERROR` に変換。入金（income）は `categorize()` を呼ばずカテゴリ `"入金"`（data-model）。sunabar の呼び出しは `AbortSignal.timeout(8000)`（起動直後の 1 回目の実測にもとづき 4 秒から変更。research R-003）（LINE への応答 5 秒以内 SC-001 のため）backend/src/services/sunabar.js
 - [x] T019 [P] 【A】fixture を使った変換のテスト backend/tests/unit/sunabar.test.js
 
 ### A2 月次サマリーを集計する（Issue #23）
@@ -103,8 +103,8 @@
 
 ### A5 Bot のデプロイ（Issue #26）
 
-- [ ] T025 【A】Lambda 用 zip を作るスクリプトと `npm run package`（B の `kakeibo-api` でも使う）backend/scripts/package.sh・backend/package.json
-- [ ] T026 【A】Lambda `kakeibo-webhook`（Node.js 22.x・タイムアウト 30 秒・環境変数）、Webhook URL の設定と検証、リッチメニュー 3 ボタン（quickstart 4-1・4-3）— コードの変更なし
+- [x] T025 【A】Lambda 用 zip を作るスクリプトと `npm run package`（B の `kakeibo-api` でも使う）backend/scripts/package.sh・backend/package.json
+- [x] T026 【A】Lambda `kakeibo-webhook`（Node.js 22.x・タイムアウト 30 秒・環境変数）、Webhook URL の設定と検証、リッチメニュー 3 ボタン（quickstart 4-1・4-3）— コードの変更なし
 
 **Checkpoint**: LINE で「今月」「先月」「あいうえお」に正しく返信（quickstart P1・P2）
 

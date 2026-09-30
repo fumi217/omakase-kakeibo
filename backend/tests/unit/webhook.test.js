@@ -127,16 +127,18 @@ for (const text of ["今月", "今月の支出", "  今月 "]) {
   });
 }
 
-test("「先月」には前の月のサマリーカードを返す", async (t) => {
-  fixNow(t);
-  const reply = mockReply(t);
-  const getSummary = mockSummary(t);
+for (const text of ["先月", "先月の支出"]) {
+  test(`「${text}」には前の月のサマリーカードを返す`, async (t) => {
+    fixNow(t);
+    const reply = mockReply(t);
+    const getSummary = mockSummary(t);
 
-  await handler(webhookEvent([textEvent("先月")]));
+    await handler(webhookEvent([textEvent(text)]));
 
-  assert.deepEqual(getSummary.mock.calls.map((c) => c.arguments[0]), ["2026-09"]);
-  assert.equal(repliedMessage(reply).altText, "2026年9月 支出 ¥1,200");
-});
+    assert.deepEqual(getSummary.mock.calls.map((c) => c.arguments[0]), ["2026-09"]);
+    assert.equal(repliedMessage(reply).altText, "2026年9月 支出 ¥1,200");
+  });
+}
 
 test("「ダッシュボード」には LIFF_URL を開くボタンを返す（集計は呼ばない）", async (t) => {
   const reply = mockReply(t);

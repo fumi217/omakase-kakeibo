@@ -42,6 +42,7 @@ async function replyFor(text) {
     case "今月の支出":
       return summaryReply(currentMonth(new Date()));
     case "先月":
+    case "先月の支出":
       return summaryReply(previousMonth(currentMonth(new Date())));
     case "ダッシュボード":
       return flexMessage.dashboardMessage(process.env.LIFF_URL);
