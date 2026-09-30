@@ -10,7 +10,11 @@ let initPromise;
 // LIFF を 1 回だけ初期化する（React の StrictMode で useEffect が 2 回呼ばれても二重に初期化しない）
 // 戻り値: { profile } … LINE の表示名などを取得できた / { needsLogin: true } … LINE の外のブラウザで未ログイン
 export function initLiff() {
-  initPromise ??= doInit();
+  // 失敗したら覚えている Promise を捨てて、次の呼び出しで初期化をやり直せるようにする（#54 のレビュー指摘 2）
+  initPromise ??= doInit().catch((err) => {
+    initPromise = undefined;
+    throw err;
+  });
   return initPromise;
 }
 

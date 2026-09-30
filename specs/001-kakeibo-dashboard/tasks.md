@@ -146,9 +146,9 @@
 
 ### B7 合計と月切替（Issue #34）
 
-- [ ] T037 【B】月次サマリーの取得（読み込み中・エラー）frontend/src/hooks/useMonthlySummary.js
-- [ ] T038 [P] 【B】入金・支出合計 frontend/src/components/SummaryCards.jsx
-- [ ] T039 [P] 【B】前の月 / 次の月 frontend/src/components/MonthSwitcher.jsx
+- [x] T037 【B】月次サマリーの取得（読み込み中・エラー）frontend/src/hooks/useMonthlySummary.js
+- [x] T038 [P] 【B】入金・支出合計 frontend/src/components/SummaryCards.jsx
+- [x] T039 [P] 【B】前の月 / 次の月 frontend/src/components/MonthSwitcher.jsx
 
 ### B8 グラフ（Issue #35）
 

@@ -1,17 +1,22 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { initLiff, login } from "../liff.js";
 
 // 画面の見出し。LINE の表示名で「○○さんの家計簿」と出す【担当 B】（US2 シナリオ 1・5、FR-021）
 export default function LiffHeader() {
   const [state, setState] = useState({ status: "loading" });
 
-  useEffect(() => {
+  const connect = useCallback(() => {
+    setState({ status: "loading" });
     initLiff()
       .then((result) =>
         setState(result.needsLogin ? { status: "needsLogin" } : { status: "ready", profile: result.profile }),
       )
       .catch((err) => setState({ status: "error", message: err.message }));
   }, []);
+
+  useEffect(() => {
+    connect();
+  }, [connect]);
 
   switch (state.status) {
     case "loading":
@@ -31,6 +36,9 @@ export default function LiffHeader() {
         <header>
           <h1>家計簿ダッシュボード</h1>
           <p>LINE との接続に失敗しました（{state.message}）</p>
+          <button type="button" onClick={connect}>
+            もう一度試す
+          </button>
         </header>
       );
     default:
