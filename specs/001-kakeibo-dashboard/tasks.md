@@ -98,8 +98,8 @@
 
 ### A4 Webhook と Flex Message（Issue #25）
 
-- [ ] T023 【A】署名検証（失敗は 401）、`message`/`text` イベントのみ処理、検証リクエストは 200、コマンド「今月・今月の支出・先月・ダッシュボード・その他（使い方）」、エラー時の返信（contracts/line-bot.md）。集計は `getMonthlySummary(currentMonth(now) / previousMonth(...))` だけを呼ぶ。⚠️ 関数 URL では `event.body` が base64（`isBase64Encoded: true`）で届くことがあるので、署名検証はデコードした**生の本文**で行う backend/src/handlers/webhook.js
-- [ ] T024 [P] 【A】Monthly Summary → Flex Message（上位 3 件、0 件の本文、`altText`、`LIFF_URL` のボタン）backend/src/services/flexMessage.js
+- [x] T023 【A】署名検証（失敗は 401）、`message`/`text` イベントのみ処理、検証リクエストは 200、コマンド「今月・今月の支出・先月・ダッシュボード・その他（使い方）」、エラー時の返信（contracts/line-bot.md）。集計は `getMonthlySummary(currentMonth(now) / previousMonth(...))` だけを呼ぶ。⚠️ 関数 URL では `event.body` が base64（`isBase64Encoded: true`）で届くことがあるので、署名検証はデコードした**生の本文**で行う backend/src/handlers/webhook.js
+- [x] T024 [P] 【A】Monthly Summary → Flex Message（上位 3 件、0 件の本文、`altText`、`LIFF_URL` のボタン）backend/src/services/flexMessage.js
 
 ### A5 Bot のデプロイ（Issue #26）
 
