@@ -118,12 +118,12 @@
 
 ### B1 frontend に LIFF を追加する（Issue #29）
 
-- [ ] T027 【B】`@line/liff`（dependencies）・`@line/liff-mock`（devDependencies）を追加し、ロックを使い捨てコンテナで生成 frontend/package.json・frontend/package-lock.json
+- [x] T027 【B】`@line/liff`（dependencies）・`@line/liff-mock`（devDependencies）を追加し、ロックを使い捨てコンテナで生成 frontend/package.json・frontend/package-lock.json
 
 ### B2 LIFF を初期化して表示名を出す（Issue #19）
 
-- [ ] T028 【B】LIFF の初期化（Mock 切替・二重初期化防止・未ログイン時の案内・エラー表示）frontend/src/liff.js
-- [ ] T029 【B】「○○さんの家計簿」のヘッダーを骨組みに組み込む frontend/src/App.jsx
+- [x] T028 【B】LIFF の初期化（Mock 切替・二重初期化防止・未ログイン時の案内・エラー表示）frontend/src/liff.js
+- [x] T029 【B】「○○さんの家計簿」のヘッダーを骨組みに組み込む frontend/src/components/LiffHeader.jsx・frontend/src/App.jsx
 
 ### B3 Amplify に公開して LINE で開く（Issue #30）
 

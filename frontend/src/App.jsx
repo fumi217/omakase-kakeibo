@@ -6,6 +6,7 @@ import CategoryPieChart from "./components/CategoryPieChart.jsx";
 import DailyBarChart from "./components/DailyBarChart.jsx";
 import BudgetList from "./components/BudgetList.jsx";
 import TransactionList from "./components/TransactionList.jsx";
+import LiffHeader from "./components/LiffHeader.jsx";
 
 // 日本時間の今月（"YYYY-MM"）
 function currentMonth() {
@@ -47,7 +48,7 @@ export default function App() {
 
   return (
     <main style={{ fontFamily: "sans-serif", padding: 16 }}>
-      <h1>家計簿ダッシュボード</h1>
+      <LiffHeader />
       <MonthSwitcher month={month} onChange={changeMonth} />
       {error && <p>データを取得できませんでした（{error}）</p>}
       <SummaryCards summary={summary} />
