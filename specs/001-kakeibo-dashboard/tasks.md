@@ -137,8 +137,8 @@
 
 ### B5 ダッシュボード API（Issue #32）
 
-- [ ] T034 【B】`GET /api/summary?month=`（`parseMonth` で検証 → `getMonthlySummary(month)` を呼ぶだけ。集計の手順は書かない。エラーは contracts の形式）backend/src/routes/summary.js
-- [ ] T035 [P] 【B】`GET /api/transactions?month=&category=`（新しい順・カテゴリ絞り込み）backend/src/routes/transactions.js
+- [x] T034 【B】`GET /api/summary?month=`（`parseMonth` で検証 → `getMonthlySummary(month)` を呼ぶだけ。集計の手順は書かない。エラーは contracts の形式）backend/src/routes/summary.js
+- [x] T035 [P] 【B】`GET /api/transactions?month=&category=`（新しい順・カテゴリ絞り込み）backend/src/routes/transactions.js
 
 ### B6 frontend にグラフライブラリを追加する（Issue #33）
 
