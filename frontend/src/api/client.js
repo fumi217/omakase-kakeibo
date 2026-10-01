@@ -10,19 +10,8 @@ async function request(path) {
   return body;
 }
 
-// month: "YYYY-MM" → Monthly Summary（data-model.md）
+// month: "YYYY-MM" → Monthly Summary（data-model.md）＋ items（新しい順の明細）・budgets（予算）
+// 明細は集計と一緒に 1 回だけ取得する（#83。/api/transactions・/mock/budget は画面からは呼ばない）
 export function getSummary(month) {
   return request(`/api/summary?month=${encodeURIComponent(month)}`);
-}
-
-// month: "YYYY-MM"、category: 省略可 → { month, items: Transaction[] }
-export function getTransactions(month, category) {
-  const query = new URLSearchParams({ month });
-  if (category) query.set("category", category);
-  return request(`/api/transactions?${query}`);
-}
-
-// month: "YYYY-MM" → { month, budgets: { [category]: 金額 } }（自作 API: 予算）
-export function getBudgets(month) {
-  return request(`/mock/budget?month=${encodeURIComponent(month)}`);
 }

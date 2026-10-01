@@ -21,23 +21,41 @@ test("存在しないパスは 404 と共通エラー形式を返す", async () 
 
 // 集計（sunabar の呼び出しを含む）は差し替えて、ルートの動きだけを確かめる。
 // sunabar のトークンがないテスト環境でも、A1 / A2 の実装後に落ちないようにするため
-test("GET /api/summary は getMonthlySummary の結果をそのまま返す", async (t) => {
-  t.mock.method(summary, "getMonthlySummary", async (month) => ({ month, categories: [] }));
+const SOURCE = { id: "sunabar", name: "sunabar", kind: "bank" };
+function tx(id, date) {
+  return { id, date, type: "expense", amount: 1000, description: id, category: "食費", source: SOURCE, isInternalTransfer: false };
+}
+
+test("GET /api/summary は Monthly Summary に、新しい順の明細（items）と予算（budgets）を足して返す（#83）", async (t) => {
+  // sunabar の古い順の後ろに、他行の明細がつながった順（getTransactions の戻り値のまま）
+  const transactions = [tx("sunabar:1", "2026-11-01"), tx("sunabar:2", "2026-11-03"), tx("card-a:1", "2026-11-02")];
+  t.mock.method(summary, "getMonthlyDashboard", async (month) => ({
+    summary: { month, categories: [] },
+    transactions,
+    budgets: { 食費: 30000, 住居: 60000 },
+  }));
 
   const res = await handler(event("GET", "/api/summary", { month: "2026-11" }));
   assert.equal(res.statusCode, 200);
-  assert.deepEqual(JSON.parse(res.body), { month: "2026-11", categories: [] });
-  assert.equal(summary.getMonthlySummary.mock.callCount(), 1);
-  assert.equal(summary.getMonthlySummary.mock.calls[0].arguments[0], "2026-11");
+  const body = JSON.parse(res.body);
+  assert.equal(body.month, "2026-11");
+  assert.deepEqual(body.categories, []);
+  assert.deepEqual(
+    body.items.map((i) => i.id),
+    ["sunabar:2", "card-a:1", "sunabar:1"],
+  );
+  assert.deepEqual(body.budgets, { 食費: 30000, 住居: 60000 });
+  assert.equal(summary.getMonthlyDashboard.mock.callCount(), 1, "明細の取得を含む集計は 1 回だけ");
+  assert.equal(summary.getMonthlyDashboard.mock.calls[0].arguments[0], "2026-11");
 });
 
 test("GET /api/summary は month が不正なら 400 INVALID_MONTH（集計は呼ばない）", async (t) => {
-  t.mock.method(summary, "getMonthlySummary", async () => ({}));
+  t.mock.method(summary, "getMonthlyDashboard", async () => ({}));
 
   const res = await handler(event("GET", "/api/summary", { month: "abc" }));
   assert.equal(res.statusCode, 400);
   assert.equal(JSON.parse(res.body).error.code, "INVALID_MONTH");
-  assert.equal(summary.getMonthlySummary.mock.callCount(), 0);
+  assert.equal(summary.getMonthlyDashboard.mock.callCount(), 0);
 });
 
 test("GET /mock/categorize は判定結果と x-mock-api ヘッダーを返す（contracts/api.md）", async () => {

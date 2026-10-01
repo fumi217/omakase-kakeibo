@@ -37,7 +37,13 @@ export default function App() {
       {/* スマホはこの順（取引 → 日別 → カテゴリ）。パソコンでの配置（日別が全幅）は index.css の .panel-body で決める */}
       <div className="panel">
         <div className="panel-body">
-          <TransactionList month={month} category={category} onClearCategory={() => setCategory(null)} />
+          <TransactionList
+            key={month}
+            items={summary?.items}
+            error={error}
+            category={category}
+            onClearCategory={() => setCategory(null)}
+          />
           {/* 明細が 0 件の月は、グラフの代わりにメッセージを出す（spec US2 シナリオ 4） */}
           {isEmpty ? (
             <p className="section section-daily muted" style={{ margin: 0 }}>

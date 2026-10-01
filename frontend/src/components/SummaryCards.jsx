@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { getBudgets } from "../api/client.js";
 import { currentMonth, daysInMonth, formatYen, todayDate } from "../month.js";
 
 // 画面の主役: 今月の支出と予算の残り。補助指標（収入・収支・貯蓄率・件数）は下に小さく【担当 B】（FR-003・FR-031、#69）
@@ -20,7 +18,7 @@ export default function SummaryCards({ month, summary, error }) {
     <section className="hero">
       <div className="muted">{label}の支出</div>
       <div className="hero-amount num">{show(expense)}</div>
-      <BudgetProgress month={month} categories={summary?.categories} />
+      <BudgetProgress month={month} categories={summary?.categories} budgets={summary?.budgets} />
 
       <dl className="stats">
         <Stat label="収入" value={show(income)} />
@@ -41,27 +39,9 @@ function Stat({ label, value }) {
   );
 }
 
-// 予算の残りと進捗。予算は自作 API（/mock/budget）から取る
-// サマリーの categories には支出のあったカテゴリの予算しか入らないため、合計は予算 API の値を使う
-function BudgetProgress({ month, categories }) {
-  const [budgets, setBudgets] = useState(null);
-
-  useEffect(() => {
-    let ignore = false;
-    setBudgets(null);
-    getBudgets(month)
-      .then((data) => {
-        if (!ignore) setBudgets(data.budgets ?? {});
-      })
-      .catch(() => {
-        // 予算が取れなくても、ほかの表示は続ける（この欄だけ出さない）
-        if (!ignore) setBudgets({});
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [month]);
-
+// 予算の残りと進捗。予算は /api/summary の budgets（/mock/budget と同じ形）を使う（#83）
+// サマリーの categories には支出のあったカテゴリの予算しか入らないため、合計は budgets から出す
+function BudgetProgress({ month, categories, budgets }) {
   if (!budgets || !categories) return null;
   const total = Object.values(budgets).reduce((sum, n) => sum + n, 0);
   if (total === 0) return null;

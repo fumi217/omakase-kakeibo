@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { getTransactions } from "../api/client.js";
+import { useState } from "react";
 import { UNKNOWN_NAME, isUnknownCategory, unknownLabel } from "../categories.js";
 import { formatYen } from "../month.js";
 
@@ -8,32 +7,16 @@ const INITIAL_COUNT = 8;
 const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
 
 // 明細一覧【担当 B】（FR-024・FR-026、spec US2 シナリオ 3）
-// props: month, category（絞り込み。null なら全件）, onClearCategory（絞り込みの解除）
-export default function TransactionList({ month, category, onClearCategory }) {
-  const [state, setState] = useState({ status: "loading", items: [] });
+// props: items（/api/summary の items。新しい順。読み込み中は null）, error（取得に失敗したときのメッセージ）,
+//        category（絞り込み。null なら全件）, onClearCategory（絞り込みの解除）
+// 明細は集計と一緒に 1 回だけ取得する（#83）。カテゴリの絞り込みは画面側で行う（#66 のレビュー指摘 1）
+// 月を切り替えたら「すべて表示」を閉じるため、App.jsx で key={month} を付けて作り直している
+export default function TransactionList({ items: allItems, error, category, onClearCategory }) {
   const [showAll, setShowAll] = useState(false);
 
-  // 明細は月ごとに 1 回だけ取得し、カテゴリの絞り込みは画面側で行う
-  // （絞り込むたびに sunabar へ問い合わせると数秒かかるため。#66 のレビュー指摘 1）
-  useEffect(() => {
-    // 月を切り替えたとき、古い応答が後から届いても捨てる
-    let ignore = false;
-    setState({ status: "loading", items: [] });
-    setShowAll(false);
-    getTransactions(month)
-      .then((data) => {
-        if (!ignore) setState({ status: "ready", items: data.items ?? [] });
-      })
-      .catch((err) => {
-        if (!ignore) setState({ status: "error", message: err.message, items: [] });
-      });
-    return () => {
-      ignore = true;
-    };
-  }, [month]);
-
-  const { status } = state;
-  const items = category ? state.items.filter((t) => t.category === category) : state.items;
+  const status = error ? "error" : allItems ? "ready" : "loading";
+  const all = allItems ?? [];
+  const items = category ? all.filter((t) => t.category === category) : all;
   const visible = category || showAll ? items : items.slice(0, INITIAL_COUNT);
 
   return (
@@ -47,7 +30,7 @@ export default function TransactionList({ month, category, onClearCategory }) {
         )}
       </div>
       {status === "loading" && <p className="muted">読み込み中…</p>}
-      {status === "error" && <p className="muted">明細を取得できませんでした（{state.message}）</p>}
+      {status === "error" && <p className="muted">明細を取得できませんでした（{error}）</p>}
       {status === "ready" && items.length === 0 && (
         <p className="muted">{category ? `${unknownLabel(category) ?? category}の明細はありません` : "この月の明細はありません"}</p>
       )}
