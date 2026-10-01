@@ -216,7 +216,7 @@
 ### X1 デモの準備と最終確認（Issue #40）
 
 - [x] T053 【A+B】sunabar でデモ用の入出金を 10〜20 件作成（入金シミュレーター・振込。振込先名はカテゴリ判定ルールに合わせる）— コードの変更なし
-- [ ] T054 【A+B】quickstart の L1〜L7・P1〜P5 を通しで確認し、デモ台本（3 分）を作る specs/001-kakeibo-dashboard/quickstart.md
+- [x] T054 【A+B】quickstart の L1〜L7・P1〜P5 を通しで確認し、デモ台本（3 分）を作る specs/001-kakeibo-dashboard/quickstart.md
 
 ### X2 README と発表資料（Issue #41）
 
