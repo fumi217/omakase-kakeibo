@@ -9,7 +9,7 @@ const routes = {
   "GET /api/transactions": require("../routes/transactions"), // 担当 B
   "GET /mock/categorize": require("../routes/mockCategorize"), // 担当 B
   "GET /mock/budget": require("../routes/mockBudget"), // 担当 A
-  "GET /mock/unified-accounts": require("../routes/mockUnifiedAccounts"), // 担当 B
+  "GET /mock/unified-accounts": require("../routes/mockUnifiedAccounts"), // 担当 A（#70 で B から移管）
 };
 
 exports.handler = async (event) => {

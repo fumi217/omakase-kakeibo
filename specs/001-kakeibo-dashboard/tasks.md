@@ -201,7 +201,7 @@
 
 ### B11 統一 ID の他行明細を合算（Issue #38）
 
-- [ ] T051 【B】`UNIFIED_ID_ENABLED` のとき他行明細を Transaction に変換して合算（`categorize()`・`source`）backend/src/services/transactions.js
+- [x] T051 【B】`UNIFIED_ID_ENABLED` のとき他行明細を Transaction に変換して合算（`categorize()`・`source`）backend/src/services/transactions.js
 
 ### B12 出どころの表示（Issue #39）
 
