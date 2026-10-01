@@ -33,16 +33,57 @@ test("ダミー明細: すべて category-rules.json のキーワードに当た
   assert.deepEqual(unmatched, []);
 });
 
-test("過去の月は、{{MONTH}} をその月に置き換えて全件を返す", async () => {
+test("基準の月（デモで見せる 9 月）は、{{MONTH}} をその月に置き換えるだけで、ひな形の金額・件数のまま返す", async () => {
+  assert.equal(data.baseMonth, "2026-09");
   const accounts = await getUnifiedAccounts(ID, "2026-09", DEMO_DAY);
 
   assert.deepEqual(
-    accounts.map((a) => [a.institutionId, a.institutionName, a.kind, a.transactions.length]),
-    data.accounts.map((a) => [a.institutionId, a.institutionName, a.kind, a.transactions.length]),
+    accounts,
+    data.accounts.map((a) => ({
+      ...a,
+      transactions: a.transactions.map((t) => ({ ...t, date: t.date.replace("{{MONTH}}", "2026-09") })),
+    })),
   );
-  const [first] = accounts[0].transactions;
-  assert.deepEqual(first, { ...data.accounts[0].transactions[0], date: data.accounts[0].transactions[0].date.replace("{{MONTH}}", "2026-09") });
-  assert.ok(accounts.flatMap((a) => a.transactions).every((t) => t.date.startsWith("2026-09-")));
+});
+
+// 基準の月以外の過去の月（発表日から見て）
+const OTHER_MONTHS = ["2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08"];
+
+async function flat(month) {
+  return (await getUnifiedAccounts(ID, month, DEMO_DAY)).flatMap((a) => a.transactions);
+}
+
+test("基準の月以外は、金額をひな形の ±15%（10 円単位）で変え、1,000 円未満の明細だけを間引く", async () => {
+  const template = new Map(allTransactions.map((t) => [t.id, t]));
+  for (const month of OTHER_MONTHS) {
+    const items = await flat(month);
+    const kept = new Set(items.map((t) => t.id));
+    for (const t of items) {
+      const base = template.get(t.id).amount;
+      assert.ok(t.date.startsWith(`${month}-`), `${month} ${t.id}`);
+      assert.equal(t.amount % 10, 0, `${month} ${t.id}`);
+      assert.ok(t.amount >= Math.floor(base * 0.85) - 10 && t.amount <= Math.ceil(base * 1.15) + 10, `${month} ${t.id} ${t.amount}`);
+    }
+    // 1,000 円以上の明細は間引かない（家賃の代わりになる大きい支出などが消えないように）
+    for (const t of allTransactions.filter((x) => x.amount >= 1000)) {
+      assert.ok(kept.has(t.id), `${month} ${t.id}`);
+    }
+  }
+});
+
+test("同じ月は何度取得しても同じ（乱数ではなく月から決まる。LINE と画面の金額が一致するように）", async () => {
+  for (const month of OTHER_MONTHS) {
+    assert.deepEqual(await flat(month), await flat(month), month);
+  }
+});
+
+test("月ごとに金額・件数が変わる（毎月同じ明細にならない）", async () => {
+  const signatures = await Promise.all(
+    ["2026-09", ...OTHER_MONTHS].map(async (month) => (await flat(month)).map((t) => `${t.id}:${t.amount}`).join(",")),
+  );
+  assert.equal(new Set(signatures).size, signatures.length);
+  const counts = await Promise.all(OTHER_MONTHS.map(async (month) => (await flat(month)).length));
+  assert.ok(new Set(counts).size > 1, `件数: ${counts.join(",")}`);
 });
 
 test("今月は、今日（日本時間）より後の日付を除く", async () => {

@@ -1,5 +1,6 @@
 {
   "unifiedId": "demo-user-0001",
+  "baseMonth": "2026-09",
   "accounts": [
     {
       "institutionId": "card-a",
