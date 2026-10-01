@@ -161,7 +161,7 @@
 
 ### B10 ダッシュボード API のデプロイ（Issue #37）
 
-- [ ] T043 【B】Lambda `kakeibo-api`（A5 の `npm run package` を使う、関数 URL の CORS を Amplify に限定）→ `VITE_API_BASE_URL` を設定して Amplify を再公開（quickstart 4-1・4-2）— コードの変更なし
+- [x] T043 【B】Lambda `kakeibo-api`（A5 の `npm run package` を使う、関数 URL の CORS を Amplify に限定）→ `VITE_API_BASE_URL` を設定して Amplify を再公開（quickstart 4-1・4-2）— コードの変更なし
 
 **Checkpoint**: リッチメニューからダッシュボードが開き、金額が LINE カードと一致（quickstart P3）
 
@@ -205,7 +205,7 @@
 
 ### B12 出どころの表示（Issue #39）
 
-- [ ] T052 【B】明細一覧に出どころのラベル frontend/src/components/TransactionList.jsx
+- [x] T052 【B】明細一覧に出どころのラベル frontend/src/components/TransactionList.jsx
 
 **Checkpoint**: quickstart P5
 
@@ -215,7 +215,7 @@
 
 ### X1 デモの準備と最終確認（Issue #40）
 
-- [ ] T053 【A+B】sunabar でデモ用の入出金を 10〜20 件作成（入金シミュレーター・振込。振込先名はカテゴリ判定ルールに合わせる）— コードの変更なし
+- [x] T053 【A+B】sunabar でデモ用の入出金を 10〜20 件作成（入金シミュレーター・振込。振込先名はカテゴリ判定ルールに合わせる）— コードの変更なし
 - [ ] T054 【A+B】quickstart の L1〜L7・P1〜P5 を通しで確認し、デモ台本（3 分）を作る specs/001-kakeibo-dashboard/quickstart.md
 
 ### X2 README と発表資料（Issue #41）
