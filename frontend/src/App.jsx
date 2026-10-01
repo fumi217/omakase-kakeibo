@@ -3,15 +3,14 @@ import { currentMonth } from "./month.js";
 import useMonthlySummary from "./hooks/useMonthlySummary.js";
 import SummaryCards from "./components/SummaryCards.jsx";
 import MonthSwitcher from "./components/MonthSwitcher.jsx";
-import CategoryPieChart from "./components/CategoryPieChart.jsx";
+import CategoryBreakdown from "./components/CategoryBreakdown.jsx";
 import DailyBarChart from "./components/DailyBarChart.jsx";
-import BudgetList from "./components/BudgetList.jsx";
 import TransactionList from "./components/TransactionList.jsx";
 import LiffHeader from "./components/LiffHeader.jsx";
 
 // 画面の骨組み【担当 B】
 // 主役（今月の支出と予算）を上に大きく置き、その下の 1 枚のパネルに 取引・日別の支出・カテゴリ別の支出 をまとめる（#69）
-// （BudgetList.jsx は A の担当。tasks.md「コンフリクトを防ぐ約束」）
+// 予算の使用率（A の BudgetList.jsx の BudgetUsage）は、カテゴリ別の支出の各行に出す
 export default function App() {
   const [month, setMonth] = useState(currentMonth);
   const [category, setCategory] = useState(null);
@@ -47,15 +46,11 @@ export default function App() {
           ) : (
             <>
               <DailyBarChart daily={summary?.daily ?? []} />
-              {/* カテゴリ別の支出と予算の使用率の見た目は、次の PR（一覧への統合）で整える */}
-              <div className="section section-category">
-                <CategoryPieChart
-                  categories={summary?.categories ?? []}
-                  selectedCategory={category}
-                  onSelect={setCategory}
-                />
-                <BudgetList categories={summary?.categories ?? []} />
-              </div>
+              <CategoryBreakdown
+                categories={summary?.categories ?? []}
+                selectedCategory={category}
+                onSelect={setCategory}
+              />
             </>
           )}
         </div>

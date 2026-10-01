@@ -215,13 +215,13 @@ button {
   overflow: hidden;
 }
 
-.usage-bar > div {
+.usage-bar > * {
   height: 100%;
   border-radius: 2px;
 }
 
-/* 使いみち不明（振込・現金）の棒は斜線にして、ほかのカテゴリと区別する */
-.usage-bar.unknown > div {
+/* 用途不明金（振込・現金）の棒は斜線にして、ほかのカテゴリと区別する */
+.usage-bar.unknown > * {
   background: repeating-linear-gradient(135deg, #b9b2a6 0 3px, #d9d3c8 3px 6px);
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTransactions } from "../api/client.js";
-import { isUnknownCategory } from "../categories.js";
+import { UNKNOWN_NAME, isUnknownCategory, unknownLabel } from "../categories.js";
 import { formatYen } from "../month.js";
 
 // 最初に出す件数。残りは「すべて表示」で開く（絞り込み中は全件）
@@ -49,7 +49,7 @@ export default function TransactionList({ month, category, onClearCategory }) {
       {status === "loading" && <p className="muted">読み込み中…</p>}
       {status === "error" && <p className="muted">明細を取得できませんでした（{state.message}）</p>}
       {status === "ready" && items.length === 0 && (
-        <p className="muted">{category ? `${category}の明細はありません` : "この月の明細はありません"}</p>
+        <p className="muted">{category ? `${unknownLabel(category) ?? category}の明細はありません` : "この月の明細はありません"}</p>
       )}
       {groupByDate(visible).map(([date, rows]) => (
         <DateGroup key={date} date={date} rows={rows} />
@@ -104,7 +104,7 @@ function FilterBar({ category, items, ready, onClear }) {
   return (
     <span className="small" style={{ display: "flex", alignItems: "center", gap: 8 }}>
       <span className="num">
-        {category}で絞り込み中{ready && `（${items.length} 件・${formatYen(total)}）`}
+        {unknownLabel(category) ?? category}で絞り込み中{ready && `（${items.length} 件・${formatYen(total)}）`}
       </span>
       <button type="button" className="text-button" onClick={onClear}>
         解除
@@ -131,8 +131,14 @@ function TransactionRow({ transaction: t }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.description}</div>
         <div className="small muted">
-          {t.isInternalTransfer ? "振替（集計外）" : isIncome ? "入金" : t.category}
-          {unknown && "（使いみち不明）"} ・ {t.source?.name ?? "不明"}
+          {t.isInternalTransfer
+            ? "振替（集計外）"
+            : isIncome
+              ? "入金"
+              : unknown
+                ? `${UNKNOWN_NAME}（${unknownLabel(t.category)}）`
+                : t.category}{" "}
+          ・ {t.source?.name ?? "不明"}
         </div>
       </div>
       {/* 支出は普通の文字色。入金だけ + を付けて緑にする */}
