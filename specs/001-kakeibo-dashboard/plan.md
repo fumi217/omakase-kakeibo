@@ -30,7 +30,7 @@ sunabar（GMO あおぞらネット銀行の API 実験場）の入出金明細�
 ```
 
 - 2 つの Lambda は**同じ zip（同じソースコード）**を使い、ハンドラー名だけ変える。
-- 集計の入口は `services/summary.js` の **`getMonthlySummary(month, now)` 1 つだけ**（明細の取得 → 予算の取得 → 集計）。LINE Bot（`handlers/webhook.js`）とダッシュボード（`routes/summary.js`）の両方がこれを呼び、表示金額の一致（FR-027 / SC-004）を担保する。
+- 集計の入口は `services/summary.js` の **`getMonthlyDashboard(month, now)` 1 つだけ**（明細の取得 → 予算の取得 → 集計）。集計に加えて、使った明細と予算も返す。LINE Bot（`handlers/webhook.js`）は集計だけを返す `getMonthlySummary` を、ダッシュボード（`routes/summary.js`）は `getMonthlyDashboard` を呼ぶ。`getMonthlySummary` も中で `getMonthlyDashboard` を通すので、表示金額の一致（FR-027 / SC-004）を担保できる。ダッシュボードは明細を 1 回だけ取得し、同じ明細から集計と明細の一覧を作る（#83）。
 
 ## Technical Context
 

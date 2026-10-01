@@ -4,7 +4,7 @@ const summary = require("../../src/services/summary");
 const transactionsService = require("../../src/services/transactions");
 const budget = require("../../src/mock/budget");
 
-const { buildMonthlySummary, getMonthlySummary } = summary;
+const { buildMonthlySummary, getMonthlyDashboard, getMonthlySummary } = summary;
 
 const SUNABAR = { id: "sunabar", name: "sunabar", kind: "bank" };
 const CARD = { id: "card-a", name: "○○カード", kind: "card" };
@@ -178,4 +178,23 @@ test("getMonthlySummary は明細と予算を取得して集計する（本番�
   assert.equal(s.totalExpense, 45000);
   assert.equal(s.categories[0].status, "warning", "取得した予算を集計に使う");
   assert.equal(s.generatedAt, "2026-10-15T12:00:00+09:00");
+});
+
+test("getMonthlyDashboard は明細を 1 回だけ取得し、集計と、集計に使った明細・予算を一緒に返す（#83）", async (t) => {
+  const getTransactions = t.mock.method(transactionsService, "getTransactions", async () => september);
+  t.mock.method(budget, "getBudgets", async () => ({ 住居: 30000, 食費: 30000 }));
+
+  const d = await getMonthlyDashboard("2026-09", NOW);
+
+  assert.equal(getTransactions.mock.callCount(), 1);
+  assert.deepEqual(d.summary, buildMonthlySummary("2026-09", september, { 住居: 30000, 食費: 30000 }, NOW));
+  assert.equal(d.transactions, september, "集計に使った明細そのもの");
+  assert.deepEqual(d.budgets, { 住居: 30000, 食費: 30000 }, "支出のないカテゴリの予算も含む");
+});
+
+test("getMonthlySummary は getMonthlyDashboard と同じ集計を返す（LINE と画面の金額の一致。FR-027）", async (t) => {
+  t.mock.method(transactionsService, "getTransactions", async () => september);
+  t.mock.method(budget, "getBudgets", async () => ({ 住居: 30000 }));
+
+  assert.deepEqual(await getMonthlySummary("2026-09", NOW), (await getMonthlyDashboard("2026-09", NOW)).summary);
 });

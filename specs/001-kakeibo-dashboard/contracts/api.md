@@ -32,11 +32,20 @@ Lambda `kakeibo-api` の関数 URL で公開する HTTP API。フロントエン
 
 月次サマリーを返す（US1・US2・US3）。LINE Bot も内部で同じ処理を使う。
 
+ダッシュボードはこの API だけを呼べば表示できるよう、Monthly Summary に加えて、集計に使った明細の一覧（`items`）と予算（`budgets`）も返す（#83）。明細は 1 回だけ取得し、同じ明細から集計と一覧を作るので、合計と一覧が食い違わない（FR-027）。
+
 | Query | 必須 | 例 | 説明 |
 |---|---|---|---|
 | `month` | ✅ | `2026-10` | 対象月 |
 
 **200 OK**
+
+`items` と `budgets` 以外は Monthly Summary（[data-model.md](../data-model.md)）そのもの。LINE Bot が使う Monthly Summary の形は変わらない。
+
+| 項目 | 説明 |
+|---|---|
+| `items` | 明細の一覧。新しい順。`/api/transactions` の `items` と同じ形 |
+| `budgets` | カテゴリごとの予算。`/mock/budget` の `budgets` と同じ形（支出のないカテゴリの予算も含む） |
 
 ```json
 {
@@ -54,11 +63,24 @@ Lambda `kakeibo-api` の関数 URL で公開する HTTP API。フロントエン
     { "date": "2026-10-02", "expense": 30000 }
   ],
   "sources": [ { "id": "sunabar", "name": "sunabar", "kind": "bank" } ],
-  "generatedAt": "2026-10-02T10:00:00+09:00"
+  "generatedAt": "2026-10-02T10:00:00+09:00",
+  "items": [
+    {
+      "id": "sunabar:0000000123",
+      "date": "2026-10-02",
+      "type": "expense",
+      "amount": 30000,
+      "description": "ﾌﾘｺﾐ ﾔﾁﾝ",
+      "category": "住居",
+      "source": { "id": "sunabar", "name": "sunabar", "kind": "bank" },
+      "isInternalTransfer": false
+    }
+  ],
+  "budgets": { "食費": 30000, "住居": 30000, "交通": 10000 }
 }
 ```
 
-明細 0 件の月は `totalIncome: 0`, `totalExpense: 0`, `categories: []`, `transactionCount: 0` を返す（エラーにしない）。
+明細 0 件の月は `totalIncome: 0`, `totalExpense: 0`, `categories: []`, `transactionCount: 0`, `items: []` を返す（エラーにしない）。
 
 ### GET `/api/transactions`
 

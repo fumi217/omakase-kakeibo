@@ -81,10 +81,16 @@ function buildMonthlySummary(month, transactions, budgets, now = new Date()) {
 }
 
 // 集計の入口: 明細の取得 → 予算の取得 → 集計
-async function getMonthlySummary(month, now = new Date()) {
+// 集計に使った明細と予算もそのまま返す（ダッシュボードが明細を取り直さずに済むように。#83）
+async function getMonthlyDashboard(month, now = new Date()) {
   const transactions = await transactionsService.getTransactions(month);
   const budgets = await budget.getBudgets(month);
-  return buildMonthlySummary(month, transactions, budgets, now);
+  return { summary: buildMonthlySummary(month, transactions, budgets, now), transactions, budgets };
 }
 
-module.exports = { buildMonthlySummary, getMonthlySummary };
+// LINE Bot 用に集計だけを返す。getMonthlyDashboard を通すので、ダッシュボードと金額が必ず一致する（FR-027）
+async function getMonthlySummary(month, now = new Date()) {
+  return (await getMonthlyDashboard(month, now)).summary;
+}
+
+module.exports = { buildMonthlySummary, getMonthlyDashboard, getMonthlySummary };
