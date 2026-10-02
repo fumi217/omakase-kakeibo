@@ -113,7 +113,7 @@ backend/
 │   ├── services/
 │   │   ├── sunabar.js           # sunabar API 呼び出し（fetch・ページング）
 │   │   ├── transactions.js      # 明細の取得・正規化・統合（sunabar + 他行）
-│   │   ├── summary.js           # getMonthlySummary（集計の入口）と buildMonthlySummary（純粋関数）。Bot とダッシュボードで共有
+│   │   ├── summary.js           # getMonthlyDashboard（集計の入口）・getMonthlySummary（Bot 用。集計だけを返す）・buildMonthlySummary（純粋関数）。Bot とダッシュボードで共有
 │   │   └── flexMessage.js       # 月次サマリー → Flex Message 変換
 │   ├── mock/                    # 自作 API（発表対象）
 │   │   ├── categorize.js        # 支出カテゴリ判定 API

@@ -63,7 +63,7 @@ flowchart TB
   subgraph aws["AWS Lambda（backend/）"]
     webhook["kakeibo-webhook"]
     api["kakeibo-api"]
-    summary["getMonthlySummary<br/>services/summary.js"]
+    summary["getMonthlyDashboard<br/>services/summary.js"]
   end
 
   sunabar["sunabar 入出金明細 API<br/>（本物）"]
@@ -81,7 +81,7 @@ flowchart TB
   api -- "/mock/*" --> mock
 ```
 
-- LINE の Bot とダッシュボードは、同じ集計処理（`getMonthlySummary`）の結果を表示します（金額が必ず一致する）。
+- LINE の Bot とダッシュボードは、同じ集計処理（`getMonthlyDashboard`）を通った結果を表示します（金額が必ず一致する）。
 - sunabar のトークンはバックエンドだけが持ち、画面（ブラウザ）には渡しません。
 
 | 領域           | 技術                                                                      |

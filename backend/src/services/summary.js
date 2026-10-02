@@ -1,5 +1,5 @@
 // 月次サマリーの集計【担当 A】（data-model.md「Monthly Summary」）
-// LINE Bot とダッシュボードの両方が getMonthlySummary だけを呼ぶ（金額を一致させるため。FR-027）
+// LINE Bot とダッシュボードの両方が getMonthlyDashboard を通る（金額を一致させるため。FR-027）
 // 分割代入せずにモジュールごと持つ（テストで getTransactions / getBudgets を差し替えられるように）
 const transactionsService = require("./transactions");
 const budget = require("../mock/budget");
