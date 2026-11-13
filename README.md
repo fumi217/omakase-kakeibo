@@ -96,8 +96,8 @@ flowchart TB
 必要なもの: Docker、Git。ホストに Node.js は不要です。
 
 ```bash
-git clone git@github.com:ms-engineer-bc26-08/yumasuda_section_7.git   # SSH の鍵がない場合は https://github.com/ms-engineer-bc26-08/yumasuda_section_7.git
-cd yumasuda_section_7
+git clone https://github.com/fumi217/omakase-kakeibo.git
+cd omakase-kakeibo
 git config core.hooksPath .githooks        # .env やトークンのコミットを止めるフックを有効にする（最初に 1 回だけ）
 cp .env.example .env                       # 値は各自で記入する（.env は Git 管理外）
 docker compose build
